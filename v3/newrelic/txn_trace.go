@@ -9,7 +9,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/newrelic/go-agent/v3/internal/jsonx"
+	"github.com/rainforestpay/go-agent/v3/internal/jsonx"
 )
 
 // See https://source.datanerd.us/agents/agent-specs/blob/master/Transaction-Trace-LEGACY.md
@@ -238,7 +238,8 @@ func (trace *harvestTrace) writeJSON(buf *bytes.Buffer) {
 	buf.WriteString("{}")       // unused: formerly custom parameters
 	buf.WriteByte(',')          //
 
-	printNodeStart(buf, nodeDetails{ // begin outer root
+	printNodeStart(buf, nodeDetails{
+		// begin outer root
 		name:          "ROOT",
 		relativeStart: 0,
 		relativeStop:  trace.Duration,
@@ -249,7 +250,8 @@ func (trace *harvestTrace) writeJSON(buf *bytes.Buffer) {
 	// will calculate exclusive time, which doesn't work for this root node
 	// since all async goroutines are children of this root.
 	exclusiveDurationMillis := trace.Duration.Seconds() * 1000.0
-	details := nodeDetails{ // begin inner root
+	details := nodeDetails{
+		// begin inner root
 		name:          trace.FinalName,
 		relativeStart: 0,
 		relativeStop:  trace.Duration,

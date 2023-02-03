@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/newrelic/go-agent/v3/internal/crossagent"
+	"github.com/rainforestpay/go-agent/v3/internal/crossagent"
 )
 
 func TestCrossAgentAWS(t *testing.T) {
@@ -38,15 +38,18 @@ func TestCrossAgentAWS(t *testing.T) {
 			}
 
 			if aws.InstanceID != testCase.ExpectedVendorsHash.AWS.InstanceID {
-				t.Fatalf("%s: instanceId incorrect; expected: %s; got: %s", testCase.TestName, testCase.ExpectedVendorsHash.AWS.InstanceID, aws.InstanceID)
+				t.Fatalf("%s: instanceId incorrect; expected: %s; got: %s", testCase.TestName, testCase.ExpectedVendorsHash.AWS.InstanceID,
+					aws.InstanceID)
 			}
 
 			if aws.InstanceType != testCase.ExpectedVendorsHash.AWS.InstanceType {
-				t.Fatalf("%s: instanceType incorrect; expected: %s; got: %s", testCase.TestName, testCase.ExpectedVendorsHash.AWS.InstanceType, aws.InstanceType)
+				t.Fatalf("%s: instanceType incorrect; expected: %s; got: %s", testCase.TestName, testCase.ExpectedVendorsHash.AWS.InstanceType,
+					aws.InstanceType)
 			}
 
 			if aws.AvailabilityZone != testCase.ExpectedVendorsHash.AWS.AvailabilityZone {
-				t.Fatalf("%s: availabilityZone incorrect; expected: %s; got: %s", testCase.TestName, testCase.ExpectedVendorsHash.AWS.AvailabilityZone, aws.AvailabilityZone)
+				t.Fatalf("%s: availabilityZone incorrect; expected: %s; got: %s", testCase.TestName,
+					testCase.ExpectedVendorsHash.AWS.AvailabilityZone, aws.AvailabilityZone)
 			}
 		}
 	}

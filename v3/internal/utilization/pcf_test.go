@@ -6,7 +6,7 @@ package utilization
 import (
 	"testing"
 
-	"github.com/newrelic/go-agent/v3/internal/crossagent"
+	"github.com/rainforestpay/go-agent/v3/internal/crossagent"
 )
 
 func TestCrossAgentPCF(t *testing.T) {
@@ -36,15 +36,18 @@ func TestCrossAgentPCF(t *testing.T) {
 			}
 
 			if pcf.InstanceGUID != testCase.ExpectedVendorsHash.PCF.InstanceGUID {
-				t.Fatalf("%s: InstanceGUID incorrect; expected: %s; got: %s", testCase.TestName, testCase.ExpectedVendorsHash.PCF.InstanceGUID, pcf.InstanceGUID)
+				t.Fatalf("%s: InstanceGUID incorrect; expected: %s; got: %s", testCase.TestName, testCase.ExpectedVendorsHash.PCF.InstanceGUID,
+					pcf.InstanceGUID)
 			}
 
 			if pcf.InstanceIP != testCase.ExpectedVendorsHash.PCF.InstanceIP {
-				t.Fatalf("%s: InstanceIP incorrect; expected: %s; got: %s", testCase.TestName, testCase.ExpectedVendorsHash.PCF.InstanceIP, pcf.InstanceIP)
+				t.Fatalf("%s: InstanceIP incorrect; expected: %s; got: %s", testCase.TestName, testCase.ExpectedVendorsHash.PCF.InstanceIP,
+					pcf.InstanceIP)
 			}
 
 			if pcf.MemoryLimit != testCase.ExpectedVendorsHash.PCF.MemoryLimit {
-				t.Fatalf("%s: MemoryLimit incorrect; expected: %s; got: %s", testCase.TestName, testCase.ExpectedVendorsHash.PCF.MemoryLimit, pcf.MemoryLimit)
+				t.Fatalf("%s: MemoryLimit incorrect; expected: %s; got: %s", testCase.TestName, testCase.ExpectedVendorsHash.PCF.MemoryLimit,
+					pcf.MemoryLimit)
 			}
 		}
 	}

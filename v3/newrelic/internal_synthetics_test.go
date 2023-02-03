@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/newrelic/go-agent/v3/internal"
-	"github.com/newrelic/go-agent/v3/internal/cat"
+	"github.com/rainforestpay/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal/cat"
 )
 
 // This collection of top-level tests affirms, for all possible combinations of
@@ -111,9 +111,11 @@ func TestSyntheticsOldCAT(t *testing.T) {
 		"nr.guid":                     internal.MatchAnything,
 	}
 
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: expectedIntrinsics,
-	}})
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: expectedIntrinsics,
+		},
+	})
 }
 
 func TestSyntheticsBetterCAT(t *testing.T) {
@@ -150,9 +152,11 @@ func TestSyntheticsBetterCAT(t *testing.T) {
 		"guid":                    internal.MatchAnything,
 	}
 
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: expectedIntrinsics,
-	}})
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: expectedIntrinsics,
+		},
+	})
 }
 
 func TestSyntheticsStandalone(t *testing.T) {
@@ -187,7 +191,9 @@ func TestSyntheticsStandalone(t *testing.T) {
 		"nr.guid":                 internal.MatchAnything,
 	}
 
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: expectedIntrinsics,
-	}})
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: expectedIntrinsics,
+		},
+	})
 }

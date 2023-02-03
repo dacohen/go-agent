@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/newrelic/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal"
 )
 
 func validateStringField(v internal.Validator, fieldName, expect, actual string) {

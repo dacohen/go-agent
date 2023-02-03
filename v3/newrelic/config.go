@@ -13,10 +13,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/newrelic/go-agent/v3/internal"
-	"github.com/newrelic/go-agent/v3/internal/logger"
-	"github.com/newrelic/go-agent/v3/internal/sysinfo"
-	"github.com/newrelic/go-agent/v3/internal/utilization"
+	"github.com/rainforestpay/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal/logger"
+	"github.com/rainforestpay/go-agent/v3/internal/sysinfo"
+	"github.com/rainforestpay/go-agent/v3/internal/utilization"
 )
 
 // Config contains Application and Transaction behavior settings.
@@ -878,51 +878,56 @@ func (l labels) MarshalJSON() ([]byte, error) {
 	return json.Marshal(ls)
 }
 
-func configConnectJSONInternal(c Config, pid int, util *utilization.Data, e environment, version string, securityPolicies *internal.SecurityPolicies, metadata map[string]string) ([]byte, error) {
-	return json.Marshal([]interface{}{struct {
-		Pid              int                         `json:"pid"`
-		Language         string                      `json:"language"`
-		Version          string                      `json:"agent_version"`
-		Host             string                      `json:"host"`
-		HostDisplayName  string                      `json:"display_host,omitempty"`
-		Settings         interface{}                 `json:"settings"`
-		AppName          []string                    `json:"app_name"`
-		HighSecurity     bool                        `json:"high_security"`
-		Labels           labels                      `json:"labels,omitempty"`
-		Environment      environment                 `json:"environment"`
-		Identifier       string                      `json:"identifier"`
-		Util             *utilization.Data           `json:"utilization"`
-		SecurityPolicies *internal.SecurityPolicies  `json:"security_policies,omitempty"`
-		Metadata         map[string]string           `json:"metadata"`
-		EventData        internal.EventHarvestConfig `json:"event_harvest_config"`
-	}{
-		Pid:             pid,
-		Language:        agentLanguage,
-		Version:         version,
-		Host:            stringLengthByteLimit(util.Hostname, hostByteLimit),
-		HostDisplayName: stringLengthByteLimit(c.HostDisplayName, hostByteLimit),
-		Settings:        (settings)(c),
-		AppName:         strings.Split(c.AppName, ";"),
-		HighSecurity:    c.HighSecurity,
-		Labels:          c.Labels,
-		Environment:     e,
-		// This identifier field is provided to avoid:
-		// https://newrelic.atlassian.net/browse/DSCORE-778
-		//
-		// This identifier is used by the collector to look up the real
-		// agent. If an identifier isn't provided, the collector will
-		// create its own based on the first appname, which prevents a
-		// single daemon from connecting "a;b" and "a;c" at the same
-		// time.
-		//
-		// Providing the identifier below works around this issue and
-		// allows users more flexibility in using application rollups.
-		Identifier:       c.AppName,
-		Util:             util,
-		SecurityPolicies: securityPolicies,
-		Metadata:         metadata,
-		EventData:        internal.DefaultEventHarvestConfigWithDT(c.TransactionEvents.MaxSamplesStored, c.ApplicationLogging.Forwarding.MaxSamplesStored, c.CustomInsightsEvents.MaxSamplesStored, c.DistributedTracer.ReservoirLimit, c.DistributedTracer.Enabled),
-	}})
+func configConnectJSONInternal(c Config, pid int, util *utilization.Data, e environment, version string, securityPolicies *internal.SecurityPolicies,
+	metadata map[string]string) ([]byte, error) {
+	return json.Marshal([]interface{}{
+		struct {
+			Pid              int                         `json:"pid"`
+			Language         string                      `json:"language"`
+			Version          string                      `json:"agent_version"`
+			Host             string                      `json:"host"`
+			HostDisplayName  string                      `json:"display_host,omitempty"`
+			Settings         interface{}                 `json:"settings"`
+			AppName          []string                    `json:"app_name"`
+			HighSecurity     bool                        `json:"high_security"`
+			Labels           labels                      `json:"labels,omitempty"`
+			Environment      environment                 `json:"environment"`
+			Identifier       string                      `json:"identifier"`
+			Util             *utilization.Data           `json:"utilization"`
+			SecurityPolicies *internal.SecurityPolicies  `json:"security_policies,omitempty"`
+			Metadata         map[string]string           `json:"metadata"`
+			EventData        internal.EventHarvestConfig `json:"event_harvest_config"`
+		}{
+			Pid:             pid,
+			Language:        agentLanguage,
+			Version:         version,
+			Host:            stringLengthByteLimit(util.Hostname, hostByteLimit),
+			HostDisplayName: stringLengthByteLimit(c.HostDisplayName, hostByteLimit),
+			Settings:        (settings)(c),
+			AppName:         strings.Split(c.AppName, ";"),
+			HighSecurity:    c.HighSecurity,
+			Labels:          c.Labels,
+			Environment:     e,
+			// This identifier field is provided to avoid:
+			// https://newrelic.atlassian.net/browse/DSCORE-778
+			//
+			// This identifier is used by the collector to look up the real
+			// agent. If an identifier isn't provided, the collector will
+			// create its own based on the first appname, which prevents a
+			// single daemon from connecting "a;b" and "a;c" at the same
+			// time.
+			//
+			// Providing the identifier below works around this issue and
+			// allows users more flexibility in using application rollups.
+			Identifier:       c.AppName,
+			Util:             util,
+			SecurityPolicies: securityPolicies,
+			Metadata:         metadata,
+			EventData: internal.DefaultEventHarvestConfigWithDT(c.TransactionEvents.MaxSamplesStored,
+				c.ApplicationLogging.Forwarding.MaxSamplesStored, c.CustomInsightsEvents.MaxSamplesStored, c.DistributedTracer.ReservoirLimit,
+				c.DistributedTracer.Enabled),
+		},
+	})
 }
 
 const (

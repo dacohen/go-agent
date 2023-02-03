@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/newrelic/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal"
 )
 
 var (

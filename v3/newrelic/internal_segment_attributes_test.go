@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/newrelic/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal"
 )
 
 func TestTraceSegments(t *testing.T) {
@@ -50,46 +50,50 @@ func TestTraceSegments(t *testing.T) {
 	internal.AddAgentSpanAttribute(txn.Private, SpanAttributeAWSOperation, "secret")
 	externalSegment.End()
 	txn.End()
-	app.ExpectTxnTraces(t, []internal.WantTxnTrace{{
-		MetricName: "OtherTransaction/Go/hello",
-		Root: internal.WantTraceSegment{
-			SegmentName: "ROOT",
-			Attributes:  map[string]interface{}{},
-			Children: []internal.WantTraceSegment{{
-				SegmentName: "OtherTransaction/Go/hello",
-				Attributes:  map[string]interface{}{"exclusive_duration_millis": internal.MatchAnything},
+	app.ExpectTxnTraces(t, []internal.WantTxnTrace{
+		{
+			MetricName: "OtherTransaction/Go/hello",
+			Root: internal.WantTraceSegment{
+				SegmentName: "ROOT",
+				Attributes:  map[string]interface{}{},
 				Children: []internal.WantTraceSegment{
 					{
-						SegmentName: "Custom/basic",
-						Attributes: map[string]interface{}{
-							"backtrace":  internal.MatchAnything,
-							"aws.region": "west",
-						},
-					},
-					{
-						SegmentName: "Datastore/statement/MySQL/mycollection/myoperation",
-						Attributes: map[string]interface{}{
-							"backtrace":        internal.MatchAnything,
-							"query_parameters": "map[zap:zip]",
-							"peer.address":     "myhost:myport",
-							"peer.hostname":    "myhost",
-							"db.statement":     "myquery",
-							"db.instance":      "dbname",
-							"aws.requestId":    123,
-						},
-					},
-					{
-						SegmentName: "External/example.com/http/GET",
-						Attributes: map[string]interface{}{
-							"backtrace":     internal.MatchAnything,
-							"http.url":      "http://example.com",
-							"aws.operation": "secret",
+						SegmentName: "OtherTransaction/Go/hello",
+						Attributes:  map[string]interface{}{"exclusive_duration_millis": internal.MatchAnything},
+						Children: []internal.WantTraceSegment{
+							{
+								SegmentName: "Custom/basic",
+								Attributes: map[string]interface{}{
+									"backtrace":  internal.MatchAnything,
+									"aws.region": "west",
+								},
+							},
+							{
+								SegmentName: "Datastore/statement/MySQL/mycollection/myoperation",
+								Attributes: map[string]interface{}{
+									"backtrace":        internal.MatchAnything,
+									"query_parameters": "map[zap:zip]",
+									"peer.address":     "myhost:myport",
+									"peer.hostname":    "myhost",
+									"db.statement":     "myquery",
+									"db.instance":      "dbname",
+									"aws.requestId":    123,
+								},
+							},
+							{
+								SegmentName: "External/example.com/http/GET",
+								Attributes: map[string]interface{}{
+									"backtrace":     internal.MatchAnything,
+									"http.url":      "http://example.com",
+									"aws.operation": "secret",
+								},
+							},
 						},
 					},
 				},
-			}},
+			},
 		},
-	}})
+	})
 }
 
 func TestTraceSegmentsNoBacktrace(t *testing.T) {
@@ -132,43 +136,47 @@ func TestTraceSegmentsNoBacktrace(t *testing.T) {
 	internal.AddAgentSpanAttribute(txn.Private, SpanAttributeAWSOperation, "secret")
 	externalSegment.End()
 	txn.End()
-	app.ExpectTxnTraces(t, []internal.WantTxnTrace{{
-		MetricName: "OtherTransaction/Go/hello",
-		Root: internal.WantTraceSegment{
-			SegmentName: "ROOT",
-			Attributes:  map[string]interface{}{},
-			Children: []internal.WantTraceSegment{{
-				SegmentName: "OtherTransaction/Go/hello",
-				Attributes:  map[string]interface{}{"exclusive_duration_millis": internal.MatchAnything},
+	app.ExpectTxnTraces(t, []internal.WantTxnTrace{
+		{
+			MetricName: "OtherTransaction/Go/hello",
+			Root: internal.WantTraceSegment{
+				SegmentName: "ROOT",
+				Attributes:  map[string]interface{}{},
 				Children: []internal.WantTraceSegment{
 					{
-						SegmentName: "Custom/basic",
-						Attributes: map[string]interface{}{
-							"aws.region": "west",
-						},
-					},
-					{
-						SegmentName: "Datastore/statement/MySQL/mycollection/myoperation",
-						Attributes: map[string]interface{}{
-							"query_parameters": "map[zap:zip]",
-							"peer.address":     "myhost:myport",
-							"peer.hostname":    "myhost",
-							"db.statement":     "myquery",
-							"db.instance":      "dbname",
-							"aws.requestId":    123,
-						},
-					},
-					{
-						SegmentName: "External/example.com/http/GET",
-						Attributes: map[string]interface{}{
-							"http.url":      "http://example.com",
-							"aws.operation": "secret",
+						SegmentName: "OtherTransaction/Go/hello",
+						Attributes:  map[string]interface{}{"exclusive_duration_millis": internal.MatchAnything},
+						Children: []internal.WantTraceSegment{
+							{
+								SegmentName: "Custom/basic",
+								Attributes: map[string]interface{}{
+									"aws.region": "west",
+								},
+							},
+							{
+								SegmentName: "Datastore/statement/MySQL/mycollection/myoperation",
+								Attributes: map[string]interface{}{
+									"query_parameters": "map[zap:zip]",
+									"peer.address":     "myhost:myport",
+									"peer.hostname":    "myhost",
+									"db.statement":     "myquery",
+									"db.instance":      "dbname",
+									"aws.requestId":    123,
+								},
+							},
+							{
+								SegmentName: "External/example.com/http/GET",
+								Attributes: map[string]interface{}{
+									"http.url":      "http://example.com",
+									"aws.operation": "secret",
+								},
+							},
 						},
 					},
 				},
-			}},
+			},
 		},
-	}})
+	})
 }
 
 func TestTraceStacktraceServerSideConfig(t *testing.T) {
@@ -188,25 +196,29 @@ func TestTraceStacktraceServerSideConfig(t *testing.T) {
 	basicSegment := txn.StartSegment("basic")
 	basicSegment.End()
 	txn.End()
-	app.ExpectTxnTraces(t, []internal.WantTxnTrace{{
-		MetricName: "OtherTransaction/Go/hello",
-		Root: internal.WantTraceSegment{
-			SegmentName: "ROOT",
-			Attributes:  map[string]interface{}{},
-			Children: []internal.WantTraceSegment{{
-				SegmentName: "OtherTransaction/Go/hello",
-				Attributes:  map[string]interface{}{"exclusive_duration_millis": internal.MatchAnything},
+	app.ExpectTxnTraces(t, []internal.WantTxnTrace{
+		{
+			MetricName: "OtherTransaction/Go/hello",
+			Root: internal.WantTraceSegment{
+				SegmentName: "ROOT",
+				Attributes:  map[string]interface{}{},
 				Children: []internal.WantTraceSegment{
 					{
-						SegmentName: "Custom/basic",
-						Attributes: map[string]interface{}{
-							"backtrace": internal.MatchAnything,
+						SegmentName: "OtherTransaction/Go/hello",
+						Attributes:  map[string]interface{}{"exclusive_duration_millis": internal.MatchAnything},
+						Children: []internal.WantTraceSegment{
+							{
+								SegmentName: "Custom/basic",
+								Attributes: map[string]interface{}{
+									"backtrace": internal.MatchAnything,
+								},
+							},
 						},
 					},
 				},
-			}},
+			},
 		},
-	}})
+	})
 }
 
 func TestTraceSegmentAttributesExcluded(t *testing.T) {
@@ -262,31 +274,35 @@ func TestTraceSegmentAttributesExcluded(t *testing.T) {
 	internal.AddAgentSpanAttribute(txn.Private, SpanAttributeAWSOperation, "secret")
 	externalSegment.End()
 	txn.End()
-	app.ExpectTxnTraces(t, []internal.WantTxnTrace{{
-		MetricName: "OtherTransaction/Go/hello",
-		Root: internal.WantTraceSegment{
-			SegmentName: "ROOT",
-			Attributes:  map[string]interface{}{},
-			Children: []internal.WantTraceSegment{{
-				SegmentName: "OtherTransaction/Go/hello",
-				Attributes:  map[string]interface{}{"exclusive_duration_millis": internal.MatchAnything},
+	app.ExpectTxnTraces(t, []internal.WantTxnTrace{
+		{
+			MetricName: "OtherTransaction/Go/hello",
+			Root: internal.WantTraceSegment{
+				SegmentName: "ROOT",
+				Attributes:  map[string]interface{}{},
 				Children: []internal.WantTraceSegment{
 					{
-						SegmentName: "Custom/basic",
-						Attributes:  map[string]interface{}{},
-					},
-					{
-						SegmentName: "Datastore/statement/MySQL/mycollection/myoperation",
-						Attributes:  map[string]interface{}{},
-					},
-					{
-						SegmentName: "External/example.com/http/GET",
-						Attributes:  map[string]interface{}{},
+						SegmentName: "OtherTransaction/Go/hello",
+						Attributes:  map[string]interface{}{"exclusive_duration_millis": internal.MatchAnything},
+						Children: []internal.WantTraceSegment{
+							{
+								SegmentName: "Custom/basic",
+								Attributes:  map[string]interface{}{},
+							},
+							{
+								SegmentName: "Datastore/statement/MySQL/mycollection/myoperation",
+								Attributes:  map[string]interface{}{},
+							},
+							{
+								SegmentName: "External/example.com/http/GET",
+								Attributes:  map[string]interface{}{},
+							},
+						},
 					},
 				},
-			}},
+			},
 		},
-	}})
+	})
 }
 
 func TestTraceSegmentAttributesSpecificallyExcluded(t *testing.T) {
@@ -342,31 +358,35 @@ func TestTraceSegmentAttributesSpecificallyExcluded(t *testing.T) {
 	internal.AddAgentSpanAttribute(txn.Private, SpanAttributeAWSOperation, "secret")
 	externalSegment.End()
 	txn.End()
-	app.ExpectTxnTraces(t, []internal.WantTxnTrace{{
-		MetricName: "OtherTransaction/Go/hello",
-		Root: internal.WantTraceSegment{
-			SegmentName: "ROOT",
-			Attributes:  map[string]interface{}{},
-			Children: []internal.WantTraceSegment{{
-				SegmentName: "OtherTransaction/Go/hello",
-				Attributes:  map[string]interface{}{"exclusive_duration_millis": internal.MatchAnything},
+	app.ExpectTxnTraces(t, []internal.WantTxnTrace{
+		{
+			MetricName: "OtherTransaction/Go/hello",
+			Root: internal.WantTraceSegment{
+				SegmentName: "ROOT",
+				Attributes:  map[string]interface{}{},
 				Children: []internal.WantTraceSegment{
 					{
-						SegmentName: "Custom/basic",
-						Attributes:  map[string]interface{}{},
-					},
-					{
-						SegmentName: "Datastore/statement/MySQL/mycollection/myoperation",
-						Attributes:  map[string]interface{}{},
-					},
-					{
-						SegmentName: "External/example.com/http/GET",
-						Attributes:  map[string]interface{}{},
+						SegmentName: "OtherTransaction/Go/hello",
+						Attributes:  map[string]interface{}{"exclusive_duration_millis": internal.MatchAnything},
+						Children: []internal.WantTraceSegment{
+							{
+								SegmentName: "Custom/basic",
+								Attributes:  map[string]interface{}{},
+							},
+							{
+								SegmentName: "Datastore/statement/MySQL/mycollection/myoperation",
+								Attributes:  map[string]interface{}{},
+							},
+							{
+								SegmentName: "External/example.com/http/GET",
+								Attributes:  map[string]interface{}{},
+							},
+						},
 					},
 				},
-			}},
+			},
 		},
-	}})
+	})
 }
 
 func TestTraceSegmentAttributesDisabled(t *testing.T) {
@@ -407,38 +427,42 @@ func TestTraceSegmentAttributesDisabled(t *testing.T) {
 	internal.AddAgentSpanAttribute(txn.Private, SpanAttributeAWSOperation, "secret")
 	externalSegment.End()
 	txn.End()
-	app.ExpectTxnTraces(t, []internal.WantTxnTrace{{
-		MetricName: "OtherTransaction/Go/hello",
-		Root: internal.WantTraceSegment{
-			SegmentName: "ROOT",
-			Attributes:  map[string]interface{}{},
-			Children: []internal.WantTraceSegment{{
-				SegmentName: "OtherTransaction/Go/hello",
-				Attributes:  map[string]interface{}{"exclusive_duration_millis": internal.MatchAnything},
+	app.ExpectTxnTraces(t, []internal.WantTxnTrace{
+		{
+			MetricName: "OtherTransaction/Go/hello",
+			Root: internal.WantTraceSegment{
+				SegmentName: "ROOT",
+				Attributes:  map[string]interface{}{},
 				Children: []internal.WantTraceSegment{
 					{
-						SegmentName: "Custom/basic",
-						Attributes: map[string]interface{}{
-							"backtrace": internal.MatchAnything,
-						},
-					},
-					{
-						SegmentName: "Datastore/statement/MySQL/mycollection/myoperation",
-						Attributes: map[string]interface{}{
-							"backtrace": internal.MatchAnything,
-						},
-					},
-					{
-						SegmentName: "ExternalTransaction/example.com/12345#67890/WebTransaction/Go/txn",
-						Attributes: map[string]interface{}{
-							"backtrace":        internal.MatchAnything,
-							"transaction_guid": internal.MatchAnything,
+						SegmentName: "OtherTransaction/Go/hello",
+						Attributes:  map[string]interface{}{"exclusive_duration_millis": internal.MatchAnything},
+						Children: []internal.WantTraceSegment{
+							{
+								SegmentName: "Custom/basic",
+								Attributes: map[string]interface{}{
+									"backtrace": internal.MatchAnything,
+								},
+							},
+							{
+								SegmentName: "Datastore/statement/MySQL/mycollection/myoperation",
+								Attributes: map[string]interface{}{
+									"backtrace": internal.MatchAnything,
+								},
+							},
+							{
+								SegmentName: "ExternalTransaction/example.com/12345#67890/WebTransaction/Go/txn",
+								Attributes: map[string]interface{}{
+									"backtrace":        internal.MatchAnything,
+									"transaction_guid": internal.MatchAnything,
+								},
+							},
 						},
 					},
 				},
-			}},
+			},
 		},
-	}})
+	})
 }
 
 func TestTraceSegmentAttributesSpecificallyDisabled(t *testing.T) {
@@ -480,36 +504,40 @@ func TestTraceSegmentAttributesSpecificallyDisabled(t *testing.T) {
 	internal.AddAgentSpanAttribute(txn.Private, SpanAttributeAWSOperation, "secret")
 	externalSegment.End()
 	txn.End()
-	app.ExpectTxnTraces(t, []internal.WantTxnTrace{{
-		MetricName: "OtherTransaction/Go/hello",
-		Root: internal.WantTraceSegment{
-			SegmentName: "ROOT",
-			Attributes:  map[string]interface{}{},
-			Children: []internal.WantTraceSegment{{
-				SegmentName: "OtherTransaction/Go/hello",
-				Attributes:  map[string]interface{}{"exclusive_duration_millis": internal.MatchAnything},
+	app.ExpectTxnTraces(t, []internal.WantTxnTrace{
+		{
+			MetricName: "OtherTransaction/Go/hello",
+			Root: internal.WantTraceSegment{
+				SegmentName: "ROOT",
+				Attributes:  map[string]interface{}{},
 				Children: []internal.WantTraceSegment{
 					{
-						SegmentName: "Custom/basic",
-						Attributes: map[string]interface{}{
-							"backtrace": internal.MatchAnything,
-						},
-					},
-					{
-						SegmentName: "Datastore/statement/MySQL/mycollection/myoperation",
-						Attributes: map[string]interface{}{
-							"backtrace": internal.MatchAnything,
-						},
-					},
-					{
-						SegmentName: "ExternalTransaction/example.com/12345#67890/WebTransaction/Go/txn",
-						Attributes: map[string]interface{}{
-							"backtrace":        internal.MatchAnything,
-							"transaction_guid": internal.MatchAnything,
+						SegmentName: "OtherTransaction/Go/hello",
+						Attributes:  map[string]interface{}{"exclusive_duration_millis": internal.MatchAnything},
+						Children: []internal.WantTraceSegment{
+							{
+								SegmentName: "Custom/basic",
+								Attributes: map[string]interface{}{
+									"backtrace": internal.MatchAnything,
+								},
+							},
+							{
+								SegmentName: "Datastore/statement/MySQL/mycollection/myoperation",
+								Attributes: map[string]interface{}{
+									"backtrace": internal.MatchAnything,
+								},
+							},
+							{
+								SegmentName: "ExternalTransaction/example.com/12345#67890/WebTransaction/Go/txn",
+								Attributes: map[string]interface{}{
+									"backtrace":        internal.MatchAnything,
+									"transaction_guid": internal.MatchAnything,
+								},
+							},
 						},
 					},
 				},
-			}},
+			},
 		},
-	}})
+	})
 }

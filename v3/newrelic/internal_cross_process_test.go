@@ -9,8 +9,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/newrelic/go-agent/v3/internal"
-	"github.com/newrelic/go-agent/v3/internal/cat"
+	"github.com/rainforestpay/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal/cat"
 )
 
 var (
@@ -88,16 +88,18 @@ func TestCrossProcessWriteHeaderSuccess(t *testing.T) {
 	}
 
 	app.ExpectMetrics(t, webMetrics)
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: catIntrinsics,
-		AgentAttributes: map[string]interface{}{
-			"request.method":   "GET",
-			"httpResponseCode": 200,
-			"http.statusCode":  200,
-			"request.uri":      "newrelic.com",
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: catIntrinsics,
+			AgentAttributes: map[string]interface{}{
+				"request.method":   "GET",
+				"httpResponseCode": 200,
+				"http.statusCode":  200,
+				"request.uri":      "newrelic.com",
+			},
+			UserAttributes: map[string]interface{}{},
 		},
-		UserAttributes: map[string]interface{}{},
-	}})
+	})
 }
 
 func TestCrossProcessWriteSuccess(t *testing.T) {
@@ -121,13 +123,15 @@ func TestCrossProcessWriteSuccess(t *testing.T) {
 	}
 
 	app.ExpectMetrics(t, webMetrics)
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: catIntrinsics,
-		// Do not test attributes here:  In Go 1.5
-		// response.headers.contentType will be not be present.
-		AgentAttributes: nil,
-		UserAttributes:  map[string]interface{}{},
-	}})
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: catIntrinsics,
+			// Do not test attributes here:  In Go 1.5
+			// response.headers.contentType will be not be present.
+			AgentAttributes: nil,
+			UserAttributes:  map[string]interface{}{},
+		},
+	})
 }
 
 func TestCrossProcessLocallyDisabled(t *testing.T) {
@@ -149,16 +153,18 @@ func TestCrossProcessLocallyDisabled(t *testing.T) {
 	}
 
 	app.ExpectMetrics(t, webMetrics)
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"name":             "WebTransaction/Go/hello",
-			"nr.apdexPerfZone": "S",
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"name":             "WebTransaction/Go/hello",
+				"nr.apdexPerfZone": "S",
+			},
+			// Do not test attributes here:  In Go 1.5
+			// response.headers.contentType will be not be present.
+			AgentAttributes: nil,
+			UserAttributes:  map[string]interface{}{},
 		},
-		// Do not test attributes here:  In Go 1.5
-		// response.headers.contentType will be not be present.
-		AgentAttributes: nil,
-		UserAttributes:  map[string]interface{}{},
-	}})
+	})
 }
 
 func TestCrossProcessDisabledByServerSideConfig(t *testing.T) {
@@ -183,16 +189,18 @@ func TestCrossProcessDisabledByServerSideConfig(t *testing.T) {
 	}
 
 	app.ExpectMetrics(t, webMetrics)
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"name":             "WebTransaction/Go/hello",
-			"nr.apdexPerfZone": "S",
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"name":             "WebTransaction/Go/hello",
+				"nr.apdexPerfZone": "S",
+			},
+			// Do not test attributes here:  In Go 1.5
+			// response.headers.contentType will be not be present.
+			AgentAttributes: nil,
+			UserAttributes:  map[string]interface{}{},
 		},
-		// Do not test attributes here:  In Go 1.5
-		// response.headers.contentType will be not be present.
-		AgentAttributes: nil,
-		UserAttributes:  map[string]interface{}{},
-	}})
+	})
 }
 
 func TestCrossProcessEnabledByServerSideConfig(t *testing.T) {
@@ -218,11 +226,13 @@ func TestCrossProcessEnabledByServerSideConfig(t *testing.T) {
 	}
 
 	app.ExpectMetrics(t, webMetrics)
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: catIntrinsics,
-		// Do not test attributes here:  In Go 1.5
-		// response.headers.contentType will be not be present.
-		AgentAttributes: nil,
-		UserAttributes:  map[string]interface{}{},
-	}})
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: catIntrinsics,
+			// Do not test attributes here:  In Go 1.5
+			// response.headers.contentType will be not be present.
+			AgentAttributes: nil,
+			UserAttributes:  map[string]interface{}{},
+		},
+	})
 }

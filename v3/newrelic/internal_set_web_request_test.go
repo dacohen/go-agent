@@ -8,7 +8,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/newrelic/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal"
 )
 
 var (
@@ -73,17 +73,19 @@ func TestSetWebRequestNil(t *testing.T) {
 		{Name: "DurationByCaller/Unknown/Unknown/Unknown/Unknown/all", Scope: "", Forced: false, Data: nil},
 		{Name: "DurationByCaller/Unknown/Unknown/Unknown/Unknown/allWeb", Scope: "", Forced: false, Data: nil},
 	})
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		AgentAttributes: map[string]interface{}{},
-		Intrinsics: map[string]interface{}{
-			"name":             "WebTransaction/Go/hello",
-			"guid":             internal.MatchAnything,
-			"sampled":          internal.MatchAnything,
-			"priority":         internal.MatchAnything,
-			"traceId":          internal.MatchAnything,
-			"nr.apdexPerfZone": internal.MatchAnything,
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			AgentAttributes: map[string]interface{}{},
+			Intrinsics: map[string]interface{}{
+				"name":             "WebTransaction/Go/hello",
+				"guid":             internal.MatchAnything,
+				"sampled":          internal.MatchAnything,
+				"priority":         internal.MatchAnything,
+				"traceId":          internal.MatchAnything,
+				"nr.apdexPerfZone": internal.MatchAnything,
+			},
 		},
-	}})
+	})
 }
 
 func TestSetWebRequestHTTPNil(t *testing.T) {
@@ -105,17 +107,19 @@ func TestSetWebRequestHTTPNil(t *testing.T) {
 		{Name: "DurationByCaller/Unknown/Unknown/Unknown/Unknown/all", Scope: "", Forced: false, Data: nil},
 		{Name: "DurationByCaller/Unknown/Unknown/Unknown/Unknown/allWeb", Scope: "", Forced: false, Data: nil},
 	})
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		AgentAttributes: map[string]interface{}{},
-		Intrinsics: map[string]interface{}{
-			"name":             "WebTransaction/Go/hello",
-			"guid":             internal.MatchAnything,
-			"sampled":          internal.MatchAnything,
-			"priority":         internal.MatchAnything,
-			"traceId":          internal.MatchAnything,
-			"nr.apdexPerfZone": internal.MatchAnything,
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			AgentAttributes: map[string]interface{}{},
+			Intrinsics: map[string]interface{}{
+				"name":             "WebTransaction/Go/hello",
+				"guid":             internal.MatchAnything,
+				"sampled":          internal.MatchAnything,
+				"priority":         internal.MatchAnything,
+				"traceId":          internal.MatchAnything,
+				"nr.apdexPerfZone": internal.MatchAnything,
+			},
 		},
-	}})
+	})
 }
 
 func TestSetWebRequestHTTPRequest(t *testing.T) {
@@ -136,17 +140,19 @@ func TestSetWebRequestHTTPRequest(t *testing.T) {
 		{Name: "DurationByCaller/Unknown/Unknown/Unknown/HTTP/all", Scope: "", Forced: false, Data: nil},
 		{Name: "DurationByCaller/Unknown/Unknown/Unknown/HTTP/allWeb", Scope: "", Forced: false, Data: nil},
 	})
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		AgentAttributes: sampleRequestAgentAttributes,
-		Intrinsics: map[string]interface{}{
-			"name":             "WebTransaction/Go/hello",
-			"guid":             internal.MatchAnything,
-			"sampled":          internal.MatchAnything,
-			"priority":         internal.MatchAnything,
-			"traceId":          internal.MatchAnything,
-			"nr.apdexPerfZone": internal.MatchAnything,
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			AgentAttributes: sampleRequestAgentAttributes,
+			Intrinsics: map[string]interface{}{
+				"name":             "WebTransaction/Go/hello",
+				"guid":             internal.MatchAnything,
+				"sampled":          internal.MatchAnything,
+				"priority":         internal.MatchAnything,
+				"traceId":          internal.MatchAnything,
+				"nr.apdexPerfZone": internal.MatchAnything,
+			},
 		},
-	}})
+	})
 }
 
 func TestSetWebRequestAlreadyEnded(t *testing.T) {
@@ -167,16 +173,18 @@ func TestSetWebRequestAlreadyEnded(t *testing.T) {
 		{Name: "DurationByCaller/Unknown/Unknown/Unknown/Unknown/all", Scope: "", Forced: false, Data: nil},
 		{Name: "DurationByCaller/Unknown/Unknown/Unknown/Unknown/allOther", Scope: "", Forced: false, Data: nil},
 	})
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		AgentAttributes: map[string]interface{}{},
-		Intrinsics: map[string]interface{}{
-			"name":     "OtherTransaction/Go/hello",
-			"guid":     internal.MatchAnything,
-			"sampled":  internal.MatchAnything,
-			"priority": internal.MatchAnything,
-			"traceId":  internal.MatchAnything,
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			AgentAttributes: map[string]interface{}{},
+			Intrinsics: map[string]interface{}{
+				"name":     "OtherTransaction/Go/hello",
+				"guid":     internal.MatchAnything,
+				"sampled":  internal.MatchAnything,
+				"priority": internal.MatchAnything,
+				"traceId":  internal.MatchAnything,
+			},
 		},
-	}})
+	})
 }
 
 func TestSetWebRequestWithDistributedTracing(t *testing.T) {
@@ -208,53 +216,57 @@ func TestSetWebRequestWithDistributedTracing(t *testing.T) {
 		{Name: "TransportDuration/App/123/456/HTTP/allWeb", Scope: "", Forced: false, Data: nil},
 		{Name: "Supportability/TraceContext/Accept/Success", Scope: "", Forced: true, Data: singleCount},
 	})
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		AgentAttributes: map[string]interface{}{
-			"request.method":       "GET",
-			"request.uri":          "http://www.newrelic.com",
-			"request.headers.host": "myhost",
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			AgentAttributes: map[string]interface{}{
+				"request.method":       "GET",
+				"request.uri":          "http://www.newrelic.com",
+				"request.headers.host": "myhost",
+			},
+			Intrinsics: map[string]interface{}{
+				"name":                     "WebTransaction/Go/hello",
+				"parent.type":              "App",
+				"parent.account":           "123",
+				"parent.app":               "456",
+				"parent.transportType":     "HTTP",
+				"parent.transportDuration": internal.MatchAnything,
+				"parentId":                 internal.MatchAnything,
+				"traceId":                  internal.MatchAnything,
+				"parentSpanId":             internal.MatchAnything,
+				"guid":                     internal.MatchAnything,
+				"sampled":                  internal.MatchAnything,
+				"priority":                 internal.MatchAnything,
+				"nr.apdexPerfZone":         internal.MatchAnything,
+			},
 		},
-		Intrinsics: map[string]interface{}{
-			"name":                     "WebTransaction/Go/hello",
-			"parent.type":              "App",
-			"parent.account":           "123",
-			"parent.app":               "456",
-			"parent.transportType":     "HTTP",
-			"parent.transportDuration": internal.MatchAnything,
-			"parentId":                 internal.MatchAnything,
-			"traceId":                  internal.MatchAnything,
-			"parentSpanId":             internal.MatchAnything,
-			"guid":                     internal.MatchAnything,
-			"sampled":                  internal.MatchAnything,
-			"priority":                 internal.MatchAnything,
-			"nr.apdexPerfZone":         internal.MatchAnything,
+	})
+	app.ExpectSpanEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"category":         "generic",
+				"guid":             internal.MatchAnything,
+				"name":             "WebTransaction/Go/hello",
+				"nr.entryPoint":    true,
+				"parentId":         internal.MatchAnything,
+				"priority":         internal.MatchAnything,
+				"sampled":          internal.MatchAnything,
+				"traceId":          internal.MatchAnything,
+				"transaction.name": "WebTransaction/Go/hello",
+				"trustedParentId":  internal.MatchAnything,
+			},
+			UserAttributes: map[string]interface{}{},
+			AgentAttributes: map[string]interface{}{
+				"parent.account":           "123",
+				"parent.app":               "456",
+				"parent.transportDuration": internal.MatchAnything,
+				"parent.transportType":     "HTTP",
+				"parent.type":              "App",
+				"request.method":           "GET",
+				"request.uri":              "http://www.newrelic.com",
+				"request.headers.host":     "myhost",
+			},
 		},
-	}})
-	app.ExpectSpanEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"category":         "generic",
-			"guid":             internal.MatchAnything,
-			"name":             "WebTransaction/Go/hello",
-			"nr.entryPoint":    true,
-			"parentId":         internal.MatchAnything,
-			"priority":         internal.MatchAnything,
-			"sampled":          internal.MatchAnything,
-			"traceId":          internal.MatchAnything,
-			"transaction.name": "WebTransaction/Go/hello",
-			"trustedParentId":  internal.MatchAnything,
-		},
-		UserAttributes: map[string]interface{}{},
-		AgentAttributes: map[string]interface{}{
-			"parent.account":           "123",
-			"parent.app":               "456",
-			"parent.transportDuration": internal.MatchAnything,
-			"parent.transportType":     "HTTP",
-			"parent.type":              "App",
-			"request.method":           "GET",
-			"request.uri":              "http://www.newrelic.com",
-			"request.headers.host":     "myhost",
-		},
-	}})
+	})
 }
 
 func TestSetWebRequestIncompleteRequest(t *testing.T) {
@@ -276,15 +288,17 @@ func TestSetWebRequestIncompleteRequest(t *testing.T) {
 		{Name: "DurationByCaller/Unknown/Unknown/Unknown/Unknown/all", Scope: "", Forced: false, Data: nil},
 		{Name: "DurationByCaller/Unknown/Unknown/Unknown/Unknown/allWeb", Scope: "", Forced: false, Data: nil},
 	})
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		AgentAttributes: map[string]interface{}{},
-		Intrinsics: map[string]interface{}{
-			"name":             "WebTransaction/Go/hello",
-			"guid":             internal.MatchAnything,
-			"sampled":          internal.MatchAnything,
-			"priority":         internal.MatchAnything,
-			"traceId":          internal.MatchAnything,
-			"nr.apdexPerfZone": internal.MatchAnything,
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			AgentAttributes: map[string]interface{}{},
+			Intrinsics: map[string]interface{}{
+				"name":             "WebTransaction/Go/hello",
+				"guid":             internal.MatchAnything,
+				"sampled":          internal.MatchAnything,
+				"priority":         internal.MatchAnything,
+				"traceId":          internal.MatchAnything,
+				"nr.apdexPerfZone": internal.MatchAnything,
+			},
 		},
-	}})
+	})
 }

@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/newrelic/go-agent/v3/internal/stacktracetest"
+	"github.com/rainforestpay/go-agent/v3/internal/stacktracetest"
 )
 
 func TestGetStackTrace(t *testing.T) {

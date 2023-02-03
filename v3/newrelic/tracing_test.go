@@ -11,10 +11,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/newrelic/go-agent/v3/internal"
-	"github.com/newrelic/go-agent/v3/internal/cat"
-	"github.com/newrelic/go-agent/v3/internal/crossagent"
-	"github.com/newrelic/go-agent/v3/internal/logger"
+	"github.com/rainforestpay/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal/cat"
+	"github.com/rainforestpay/go-agent/v3/internal/crossagent"
+	"github.com/rainforestpay/go-agent/v3/internal/logger"
 )
 
 func trueFunc() bool  { return true }
@@ -180,11 +180,12 @@ func TestSegmentOutOfOrder(t *testing.T) {
 	}
 }
 
-//                                          |-t3-|    |-t4-|
-//                           |-t2-|    |-never-finished----------
-//            |-t1-|    |--never-finished------------------------
-//       |-------alpha------------------------------------------|
-//  0    1    2    3    4    5    6    7    8    9    10   11   12
+//	                                   |-t3-|    |-t4-|
+//	                    |-t2-|    |-never-finished----------
+//	     |-t1-|    |--never-finished------------------------
+//	|-------alpha------------------------------------------|
+//
+// 0    1    2    3    4    5    6    7    8    9    10   11   12
 func TestLostChildren(t *testing.T) {
 	start := time.Date(2014, time.November, 28, 1, 1, 0, 0, time.UTC)
 	txndata := &txnData{}
@@ -221,11 +222,12 @@ func TestLostChildren(t *testing.T) {
 	})
 }
 
-//                                          |-t3-|    |-t4-|
-//                           |-t2-|    |-never-finished----------
-//            |-t1-|    |--never-finished------------------------
-//  |-------root-------------------------------------------------
-//  0    1    2    3    4    5    6    7    8    9    10   11   12
+//	                              |-t3-|    |-t4-|
+//	               |-t2-|    |-never-finished----------
+//	|-t1-|    |--never-finished------------------------
+//
+// |-------root-------------------------------------------------
+// 0    1    2    3    4    5    6    7    8    9    10   11   12
 func TestLostChildrenRoot(t *testing.T) {
 	start := time.Date(2014, time.November, 28, 1, 1, 0, 0, time.UTC)
 	txndata := &txnData{}

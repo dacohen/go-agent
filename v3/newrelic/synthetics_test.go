@@ -9,9 +9,9 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/newrelic/go-agent/v3/internal"
-	"github.com/newrelic/go-agent/v3/internal/cat"
-	"github.com/newrelic/go-agent/v3/internal/crossagent"
+	"github.com/rainforestpay/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal/cat"
+	"github.com/rainforestpay/go-agent/v3/internal/crossagent"
 )
 
 type harvestedTxnTrace struct {
@@ -204,7 +204,8 @@ func TestSynthetics(t *testing.T) {
 		// Now we verify that the unexpected intrinsics didn't miraculously appear.
 		for _, key := range tc.OutputTransactionTrace.NonExpectedIntrinsics {
 			if trace.traceDetails.attributes.intrinsics.has(key) {
-				t.Errorf("%s: expected intrinsic %s to be missing; instead, got value %v", tc.Name, key, trace.traceDetails.attributes.intrinsics[key])
+				t.Errorf("%s: expected intrinsic %s to be missing; instead, got value %v", tc.Name, key,
+					trace.traceDetails.attributes.intrinsics[key])
 			}
 		}
 

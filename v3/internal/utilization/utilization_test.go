@@ -10,8 +10,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/newrelic/go-agent/v3/internal/crossagent"
-	"github.com/newrelic/go-agent/v3/internal/logger"
+	"github.com/rainforestpay/go-agent/v3/internal/crossagent"
+	"github.com/rainforestpay/go-agent/v3/internal/logger"
 )
 
 func TestJSONMarshalling(t *testing.T) {
@@ -136,11 +136,13 @@ func TestOverrideFromConfig(t *testing.T) {
 		{Config{LogicalProcessors: 16}, `{"logical_processors":16}`},
 		{Config{TotalRAMMIB: 1024}, `{"total_ram_mib":1024}`},
 		{Config{BillingHostname: "localhost"}, `{"hostname":"localhost"}`},
-		{Config{
-			LogicalProcessors: 16,
-			TotalRAMMIB:       1024,
-			BillingHostname:   "localhost",
-		}, `{"logical_processors":16,"total_ram_mib":1024,"hostname":"localhost"}`},
+		{
+			Config{
+				LogicalProcessors: 16,
+				TotalRAMMIB:       1024,
+				BillingHostname:   "localhost",
+			}, `{"logical_processors":16,"total_ram_mib":1024,"hostname":"localhost"}`,
+		},
 	}
 
 	for _, tc := range testcases {

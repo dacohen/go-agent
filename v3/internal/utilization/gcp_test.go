@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/newrelic/go-agent/v3/internal/crossagent"
+	"github.com/rainforestpay/go-agent/v3/internal/crossagent"
 )
 
 func TestCrossAgentGCP(t *testing.T) {
@@ -42,7 +42,8 @@ func TestCrossAgentGCP(t *testing.T) {
 			}
 
 			if gcp.MachineType != testCase.ExpectedVendorsHash.GCP.MachineType {
-				t.Fatalf("%s: MachineType incorrect; expected: %s; got: %s", testCase.TestName, testCase.ExpectedVendorsHash.GCP.MachineType, gcp.MachineType)
+				t.Fatalf("%s: MachineType incorrect; expected: %s; got: %s", testCase.TestName, testCase.ExpectedVendorsHash.GCP.MachineType,
+					gcp.MachineType)
 			}
 
 			if gcp.Name != testCase.ExpectedVendorsHash.GCP.Name {

@@ -13,8 +13,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/newrelic/go-agent/v3/internal"
-	"github.com/newrelic/go-agent/v3/internal/crossagent"
+	"github.com/rainforestpay/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal/crossagent"
 )
 
 type fieldExpect struct {
@@ -59,10 +59,13 @@ func TestJSONDTHeaders(t *testing.T) {
 		{"{}", http.Header{}, false},
 		{" invalid ", http.Header{}, true},
 		{`"foo"`, http.Header{}, true},
-		{`{"foo": "bar"}`, http.Header{
-			"Foo": {"bar"},
-		}, false},
-		{`{
+		{
+			`{"foo": "bar"}`, http.Header{
+				"Foo": {"bar"},
+			}, false,
+		},
+		{
+			`{
 			"foo": "bar",
 			"baz": "quux",
 			"multiple": [
@@ -71,10 +74,11 @@ func TestJSONDTHeaders(t *testing.T) {
 				"gamma"
 			]
 		}`, http.Header{
-			"Foo":      {"bar"},
-			"Baz":      {"quux"},
-			"Multiple": {"alpha", "beta", "gamma"},
-		}, false},
+				"Foo":      {"bar"},
+				"Baz":      {"quux"},
+				"Multiple": {"alpha", "beta", "gamma"},
+			}, false,
+		},
 	} {
 		h, err := DistributedTraceHeadersFromJSON(test.in)
 
@@ -177,9 +181,11 @@ func runW3CTestCase(t *testing.T, tc TraceContextTestCase) {
 	// There is a single test with an error (named "exception"), so these
 	// error expectations can be hard coded.
 	extraErrorFields := &fieldExpect{
-		Expected: []string{"parent.type", "parent.account", "parent.app",
+		Expected: []string{
+			"parent.type", "parent.account", "parent.app",
 			"parent.transportType", "error.message", "transactionName",
-			"parent.transportDuration", "error.class", "spanId"},
+			"parent.transportDuration", "error.class", "spanId",
+		},
 	}
 
 	for _, value := range tc.Intrinsics.TargetEvents {

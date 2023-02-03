@@ -6,7 +6,7 @@ package cat
 import (
 	"testing"
 
-	"github.com/newrelic/go-agent/v3/internal/crossagent"
+	"github.com/rainforestpay/go-agent/v3/internal/crossagent"
 )
 
 func TestGeneratePathHash(t *testing.T) {

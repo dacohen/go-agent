@@ -8,7 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/newrelic/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal"
 )
 
 func TestSetWebResponseNil(t *testing.T) {
@@ -26,13 +26,15 @@ func TestSetWebResponseNil(t *testing.T) {
 		t.Error(err, n)
 	}
 	txn.End()
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		AgentAttributes: map[string]interface{}{
-			"httpResponseCode": 123,
-			"http.statusCode":  123,
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			AgentAttributes: map[string]interface{}{
+				"httpResponseCode": 123,
+				"http.statusCode":  123,
+			},
+			Intrinsics: map[string]interface{}{"name": "OtherTransaction/Go/hello"},
 		},
-		Intrinsics: map[string]interface{}{"name": "OtherTransaction/Go/hello"},
-	}})
+	})
 }
 
 func TestSetWebResponseSuccess(t *testing.T) {
@@ -60,13 +62,15 @@ func TestSetWebResponseSuccess(t *testing.T) {
 	if w.Body.String() != body {
 		t.Error(w.Body.String())
 	}
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		AgentAttributes: map[string]interface{}{
-			"httpResponseCode": 123,
-			"http.statusCode":  123,
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			AgentAttributes: map[string]interface{}{
+				"httpResponseCode": 123,
+				"http.statusCode":  123,
+			},
+			Intrinsics: map[string]interface{}{"name": "OtherTransaction/Go/hello"},
 		},
-		Intrinsics: map[string]interface{}{"name": "OtherTransaction/Go/hello"},
-	}})
+	})
 }
 
 type writerWithFlush struct{}

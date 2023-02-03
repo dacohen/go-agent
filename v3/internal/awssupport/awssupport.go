@@ -1,6 +1,7 @@
 // Copyright 2020 New Relic Corporation. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+//go:build go1.8
 // +build go1.8
 
 package awssupport
@@ -10,8 +11,8 @@ import (
 	"net/http"
 	"reflect"
 
-	"github.com/newrelic/go-agent/v3/internal/integrationsupport"
-	newrelic "github.com/newrelic/go-agent/v3/newrelic"
+	"github.com/rainforestpay/go-agent/v3/internal/integrationsupport"
+	newrelic "github.com/rainforestpay/go-agent/v3/newrelic"
 )
 
 type contextKeyType struct{}

@@ -1,6 +1,7 @@
 // Copyright 2020 New Relic Corporation. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+//go:build go1.13
 // +build go1.13
 
 package newrelic
@@ -9,7 +10,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/newrelic/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal"
 )
 
 func TestNoticedWrappedError(t *testing.T) {
@@ -30,23 +31,27 @@ func TestNoticedWrappedError(t *testing.T) {
 	txn.NoticeError(alpha())
 	app.expectNoLoggedErrors(t)
 	txn.End()
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName: "OtherTransaction/Go/hello",
-		Msg:     "problem in alpha: problem in beta: socket error",
-		Klass:   "socketError",
-		UserAttributes: map[string]interface{}{
-			"zip": "zap",
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName: "OtherTransaction/Go/hello",
+			Msg:     "problem in alpha: problem in beta: socket error",
+			Klass:   "socketError",
+			UserAttributes: map[string]interface{}{
+				"zip": "zap",
+			},
 		},
-	}})
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "socketError",
-			"error.message":   "problem in alpha: problem in beta: socket error",
-			"transactionName": "OtherTransaction/Go/hello",
+	})
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "socketError",
+				"error.message":   "problem in alpha: problem in beta: socket error",
+				"transactionName": "OtherTransaction/Go/hello",
+			},
+			UserAttributes: map[string]interface{}{
+				"zip": "zap",
+			},
 		},
-		UserAttributes: map[string]interface{}{
-			"zip": "zap",
-		},
-	}})
+	})
 	app.ExpectMetrics(t, backgroundErrorMetrics)
 }

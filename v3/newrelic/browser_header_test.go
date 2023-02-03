@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/newrelic/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal"
 )
 
 func TestNilBrowserTimingHeader(t *testing.T) {

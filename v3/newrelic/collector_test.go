@@ -17,8 +17,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/newrelic/go-agent/v3/internal"
-	"github.com/newrelic/go-agent/v3/internal/logger"
+	"github.com/rainforestpay/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal/logger"
 )
 
 func TestCollectorResponseCodeError(t *testing.T) {
@@ -95,7 +95,8 @@ func TestCollectorRequest(t *testing.T) {
 		Client: &http.Client{
 			Transport: roundTripperFunc(func(r *http.Request) (*http.Response, error) {
 				testField("method", r.Method, "POST")
-				testField("url", r.URL.String(), "https://collector.com/agent_listener/invoke_raw_method?license_key=the_license&marshal_format=json&method=cmd_name&protocol_version=17&run_id=run_id")
+				testField("url", r.URL.String(),
+					"https://collector.com/agent_listener/invoke_raw_method?license_key=the_license&marshal_format=json&method=cmd_name&protocol_version=17&run_id=run_id")
 				testField("Accept-Encoding", r.Header.Get("Accept-Encoding"), "identity, deflate")
 				testField("Content-Type", r.Header.Get("Content-Type"), "application/octet-stream")
 				testField("User-Agent", r.Header.Get("User-Agent"), "NewRelic-Go-Agent/"+Version)

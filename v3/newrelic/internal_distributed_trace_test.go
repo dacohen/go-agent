@@ -14,8 +14,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/newrelic/go-agent/v3/internal"
-	"github.com/newrelic/go-agent/v3/internal/crossagent"
+	"github.com/rainforestpay/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal/crossagent"
 )
 
 func distributedTracingReplyFields(reply *internal.ConnectReply) {
@@ -134,22 +134,24 @@ func TestPayloadConnection(t *testing.T) {
 	txn.End()
 	app.expectNoLoggedErrors(t)
 	app.ExpectMetrics(t, distributedTracingSuccessMetrics)
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"name":                     "OtherTransaction/Go/hello",
-			"parent.type":              "App",
-			"parent.account":           "123",
-			"parent.app":               "456",
-			"parent.transportType":     "HTTP",
-			"parent.transportDuration": internal.MatchAnything,
-			"parentId":                 "52fdfc072182654f",
-			"traceId":                  "52fdfc072182654f163f5f0f9a621d72",
-			"parentSpanId":             "9566c74d10d1e2c6",
-			"guid":                     internal.MatchAnything,
-			"sampled":                  true,
-			"priority":                 1.437714, // priority must be >1 when sampled is true
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"name":                     "OtherTransaction/Go/hello",
+				"parent.type":              "App",
+				"parent.account":           "123",
+				"parent.app":               "456",
+				"parent.transportType":     "HTTP",
+				"parent.transportDuration": internal.MatchAnything,
+				"parentId":                 "52fdfc072182654f",
+				"traceId":                  "52fdfc072182654f163f5f0f9a621d72",
+				"parentSpanId":             "9566c74d10d1e2c6",
+				"guid":                     internal.MatchAnything,
+				"sampled":                  true,
+				"priority":                 1.437714, // priority must be >1 when sampled is true
+			},
 		},
-	}})
+	})
 }
 
 func TestAcceptMultiple(t *testing.T) {
@@ -167,22 +169,24 @@ func TestAcceptMultiple(t *testing.T) {
 	app.ExpectMetrics(t, append([]internal.WantMetric{
 		{Name: "Supportability/DistributedTrace/AcceptPayload/Ignored/Multiple", Scope: "", Forced: true, Data: singleCount},
 	}, distributedTracingSuccessMetrics...))
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"name":                     "OtherTransaction/Go/hello",
-			"parent.type":              "App",
-			"parent.account":           "123",
-			"parent.app":               "456",
-			"parent.transportType":     "HTTP",
-			"parent.transportDuration": internal.MatchAnything,
-			"parentId":                 "52fdfc072182654f",
-			"traceId":                  "52fdfc072182654f163f5f0f9a621d72",
-			"parentSpanId":             "9566c74d10d1e2c6",
-			"guid":                     internal.MatchAnything,
-			"sampled":                  internal.MatchAnything,
-			"priority":                 internal.MatchAnything,
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"name":                     "OtherTransaction/Go/hello",
+				"parent.type":              "App",
+				"parent.account":           "123",
+				"parent.app":               "456",
+				"parent.transportType":     "HTTP",
+				"parent.transportDuration": internal.MatchAnything,
+				"parentId":                 "52fdfc072182654f",
+				"traceId":                  "52fdfc072182654f163f5f0f9a621d72",
+				"parentSpanId":             "9566c74d10d1e2c6",
+				"guid":                     internal.MatchAnything,
+				"sampled":                  internal.MatchAnything,
+				"priority":                 internal.MatchAnything,
+			},
 		},
-	}})
+	})
 }
 
 func TestInsertDistributedTraceHeadersNotConnected(t *testing.T) {
@@ -210,15 +214,17 @@ func TestAcceptDistributedTraceHeadersNil(t *testing.T) {
 	app.ExpectMetrics(t, append([]internal.WantMetric{
 		{Name: "Supportability/DistributedTrace/AcceptPayload/Ignored/Null", Scope: "", Forced: true, Data: nil},
 	}, backgroundMetricsUnknownCaller...))
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"name":     "OtherTransaction/Go/hello",
-			"guid":     internal.MatchAnything,
-			"traceId":  internal.MatchAnything,
-			"priority": internal.MatchAnything,
-			"sampled":  internal.MatchAnything,
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"name":     "OtherTransaction/Go/hello",
+				"guid":     internal.MatchAnything,
+				"traceId":  internal.MatchAnything,
+				"priority": internal.MatchAnything,
+				"sampled":  internal.MatchAnything,
+			},
 		},
-	}})
+	})
 }
 
 func TestAcceptDistributedTraceHeadersBetterCatDisabled(t *testing.T) {
@@ -234,11 +240,13 @@ func TestAcceptDistributedTraceHeadersBetterCatDisabled(t *testing.T) {
 	txn.End()
 	app.expectNoLoggedErrors(t)
 	app.ExpectMetrics(t, backgroundMetrics)
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"name": "OtherTransaction/Go/hello",
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"name": "OtherTransaction/Go/hello",
+			},
 		},
-	}})
+	})
 }
 
 func TestPayloadTransactionsDisabled(t *testing.T) {
@@ -267,15 +275,17 @@ func TestPayloadConnectionEmptyString(t *testing.T) {
 	txn.End()
 	app.expectNoLoggedErrors(t)
 	app.ExpectMetrics(t, backgroundMetricsUnknownCaller)
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"name":     "OtherTransaction/Go/hello",
-			"guid":     internal.MatchAnything,
-			"traceId":  internal.MatchAnything,
-			"priority": internal.MatchAnything,
-			"sampled":  internal.MatchAnything,
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"name":     "OtherTransaction/Go/hello",
+				"guid":     internal.MatchAnything,
+				"traceId":  internal.MatchAnything,
+				"priority": internal.MatchAnything,
+				"sampled":  internal.MatchAnything,
+			},
 		},
-	}})
+	})
 }
 
 func TestCreatePayloadFinished(t *testing.T) {
@@ -300,15 +310,17 @@ func TestAcceptPayloadFinished(t *testing.T) {
 		"reason": errAlreadyEnded.Error(),
 	})
 	app.ExpectMetrics(t, backgroundMetricsUnknownCaller)
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"name":     "OtherTransaction/Go/hello",
-			"guid":     internal.MatchAnything,
-			"traceId":  internal.MatchAnything,
-			"priority": internal.MatchAnything,
-			"sampled":  internal.MatchAnything,
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"name":     "OtherTransaction/Go/hello",
+				"guid":     internal.MatchAnything,
+				"traceId":  internal.MatchAnything,
+				"priority": internal.MatchAnything,
+				"sampled":  internal.MatchAnything,
+			},
 		},
-	}})
+	})
 }
 
 func TestPayloadAcceptAfterCreate(t *testing.T) {
@@ -328,15 +340,17 @@ func TestPayloadAcceptAfterCreate(t *testing.T) {
 		{Name: "Supportability/TraceContext/Create/Success", Scope: "", Forced: true, Data: singleCount},
 		{Name: "Supportability/DistributedTrace/AcceptPayload/Ignored/CreateBeforeAccept", Scope: "", Forced: true, Data: singleCount},
 	}, backgroundMetricsUnknownCaller...))
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"name":     "OtherTransaction/Go/hello",
-			"guid":     internal.MatchAnything,
-			"traceId":  internal.MatchAnything,
-			"priority": internal.MatchAnything,
-			"sampled":  internal.MatchAnything,
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"name":     "OtherTransaction/Go/hello",
+				"guid":     internal.MatchAnything,
+				"traceId":  internal.MatchAnything,
+				"priority": internal.MatchAnything,
+				"sampled":  internal.MatchAnything,
+			},
 		},
-	}})
+	})
 }
 
 func TestPayloadFromApplicationEmptyTransportType(t *testing.T) {
@@ -378,21 +392,23 @@ func TestPayloadFromApplicationEmptyTransportType(t *testing.T) {
 		{Name: "TransportDuration/App/123/456/Unknown/allOther", Scope: "", Forced: false, Data: nil},
 		{Name: "Supportability/DistributedTrace/AcceptPayload/Success", Scope: "", Forced: true, Data: singleCount},
 	})
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"name":                     "OtherTransaction/Go/hello",
-			"parent.type":              "App",
-			"parent.account":           "123",
-			"parent.app":               "456",
-			"parent.transportType":     "Unknown",
-			"parent.transportDuration": internal.MatchAnything,
-			"sampled":                  internal.MatchAnything,
-			"priority":                 internal.MatchAnything,
-			"traceId":                  "traceID",
-			"parentSpanId":             "id",
-			"guid":                     internal.MatchAnything,
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"name":                     "OtherTransaction/Go/hello",
+				"parent.type":              "App",
+				"parent.account":           "123",
+				"parent.app":               "456",
+				"parent.transportType":     "Unknown",
+				"parent.transportDuration": internal.MatchAnything,
+				"sampled":                  internal.MatchAnything,
+				"priority":                 internal.MatchAnything,
+				"traceId":                  "traceID",
+				"parentSpanId":             "id",
+				"guid":                     internal.MatchAnything,
+			},
 		},
-	}})
+	})
 }
 
 func TestPayloadFutureVersion(t *testing.T) {
@@ -416,15 +432,17 @@ func TestPayloadFutureVersion(t *testing.T) {
 	app.ExpectMetrics(t, append([]internal.WantMetric{
 		{Name: "Supportability/DistributedTrace/AcceptPayload/Ignored/MajorVersion", Scope: "", Forced: true, Data: singleCount},
 	}, backgroundUnknownCallerWithTransport...))
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"name":     "OtherTransaction/Go/hello",
-			"sampled":  internal.MatchAnything,
-			"priority": internal.MatchAnything,
-			"traceId":  internal.MatchAnything,
-			"guid":     internal.MatchAnything,
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"name":     "OtherTransaction/Go/hello",
+				"sampled":  internal.MatchAnything,
+				"priority": internal.MatchAnything,
+				"traceId":  internal.MatchAnything,
+				"guid":     internal.MatchAnything,
+			},
 		},
-	}})
+	})
 }
 
 func TestPayloadParsingError(t *testing.T) {
@@ -443,15 +461,17 @@ func TestPayloadParsingError(t *testing.T) {
 	app.ExpectMetrics(t, append([]internal.WantMetric{
 		{Name: "Supportability/DistributedTrace/AcceptPayload/ParseException", Scope: "", Forced: true, Data: singleCount},
 	}, backgroundUnknownCallerWithTransport...))
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"name":     "OtherTransaction/Go/hello",
-			"sampled":  internal.MatchAnything,
-			"priority": internal.MatchAnything,
-			"traceId":  internal.MatchAnything,
-			"guid":     internal.MatchAnything,
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"name":     "OtherTransaction/Go/hello",
+				"sampled":  internal.MatchAnything,
+				"priority": internal.MatchAnything,
+				"traceId":  internal.MatchAnything,
+				"guid":     internal.MatchAnything,
+			},
 		},
-	}})
+	})
 }
 
 func TestPayloadFromFuture(t *testing.T) {
@@ -471,22 +491,24 @@ func TestPayloadFromFuture(t *testing.T) {
 	txn.End()
 	app.expectNoLoggedErrors(t)
 	app.ExpectMetrics(t, distributedTracingSuccessMetrics)
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"name":                     "OtherTransaction/Go/hello",
-			"parent.type":              "App",
-			"parent.account":           "123",
-			"parent.app":               "456",
-			"parent.transportType":     "HTTP",
-			"parent.transportDuration": 0,
-			"parentId":                 "52fdfc072182654f",
-			"traceId":                  "52fdfc072182654f163f5f0f9a621d72",
-			"parentSpanId":             "9566c74d10037c4d",
-			"guid":                     internal.MatchAnything,
-			"sampled":                  internal.MatchAnything,
-			"priority":                 internal.MatchAnything,
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"name":                     "OtherTransaction/Go/hello",
+				"parent.type":              "App",
+				"parent.account":           "123",
+				"parent.app":               "456",
+				"parent.transportType":     "HTTP",
+				"parent.transportDuration": 0,
+				"parentId":                 "52fdfc072182654f",
+				"traceId":                  "52fdfc072182654f163f5f0f9a621d72",
+				"parentSpanId":             "9566c74d10037c4d",
+				"guid":                     internal.MatchAnything,
+				"sampled":                  internal.MatchAnything,
+				"priority":                 internal.MatchAnything,
+			},
 		},
-	}})
+	})
 }
 
 func TestPayloadUntrustedAccount(t *testing.T) {
@@ -514,15 +536,17 @@ func TestPayloadUntrustedAccount(t *testing.T) {
 		{Name: "Supportability/DistributedTrace/AcceptPayload/Ignored/UntrustedAccount", Scope: "", Forced: true, Data: singleCount},
 		{Name: "Supportability/DistributedTrace/AcceptPayload/Success", Scope: "", Forced: true, Data: singleCount},
 	}, backgroundUnknownCallerWithTransport...))
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"name":     "OtherTransaction/Go/hello",
-			"guid":     internal.MatchAnything,
-			"traceId":  internal.MatchAnything,
-			"priority": internal.MatchAnything,
-			"sampled":  internal.MatchAnything,
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"name":     "OtherTransaction/Go/hello",
+				"guid":     internal.MatchAnything,
+				"traceId":  internal.MatchAnything,
+				"priority": internal.MatchAnything,
+				"sampled":  internal.MatchAnything,
+			},
 		},
-	}})
+	})
 }
 
 func TestPayloadMissingVersion(t *testing.T) {
@@ -1240,9 +1264,11 @@ func runDistributedTraceCrossAgentTestcase(tst *testing.T, tc distributedTraceTe
 	// error expectations can be hard coded. TODO: Move some of these.
 	// fields into the cross agent tests.
 	extraErrorFields := &fieldExpectations{
-		Expected: []string{"parent.type", "parent.account", "parent.app",
+		Expected: []string{
+			"parent.type", "parent.account", "parent.app",
 			"parent.transportType", "error.message", "transactionName",
-			"parent.transportDuration", "error.class", "spanId"},
+			"parent.transportDuration", "error.class", "spanId",
+		},
 	}
 
 	for _, value := range tc.Intrinsics.TargetEvents {
@@ -1880,17 +1906,19 @@ func TestW3CTraceParentWithoutTraceContext(t *testing.T) {
 	txn.AcceptDistributedTraceHeaders(TransportHTTP, hdrs)
 	txn.End()
 
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"name":                 "OtherTransaction/Go/hello",
-			"traceId":              "050c91b77efca9b0ef38b30c182355ce",
-			"parentSpanId":         "560ccffb087d1906",
-			"guid":                 internal.MatchAnything,
-			"sampled":              internal.MatchAnything,
-			"priority":             internal.MatchAnything,
-			"parent.transportType": "HTTP",
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"name":                 "OtherTransaction/Go/hello",
+				"traceId":              "050c91b77efca9b0ef38b30c182355ce",
+				"parentSpanId":         "560ccffb087d1906",
+				"guid":                 internal.MatchAnything,
+				"sampled":              internal.MatchAnything,
+				"priority":             internal.MatchAnything,
+				"parent.transportType": "HTTP",
+			},
 		},
-	}})
+	})
 }
 
 func TestDistributedTraceInteroperabilityErrorFallbacks(t *testing.T) {
@@ -2057,9 +2085,11 @@ func TestDistributedTraceInteroperabilityErrorFallbacks(t *testing.T) {
 			txn.AcceptDistributedTraceHeaders(TransportHTTP, hdrs)
 			txn.End()
 
-			app.ExpectTxnEvents(t, []internal.WantEvent{{
-				Intrinsics: tc.expIntrinsics,
-			}})
+			app.ExpectTxnEvents(t, []internal.WantEvent{
+				{
+					Intrinsics: tc.expIntrinsics,
+				},
+			})
 		})
 	}
 }
@@ -2090,22 +2120,24 @@ func TestW3CTraceStateMultipleHeaders(t *testing.T) {
 			txn.End()
 			app.expectNoLoggedErrors(t)
 
-			app.ExpectSpanEvents(t, []internal.WantEvent{{
-				Intrinsics: map[string]interface{}{
-					"category":         "generic",
-					"guid":             "9566c74d10d1e2c6",
-					"name":             "OtherTransaction/Go/hello",
-					"transaction.name": "OtherTransaction/Go/hello",
-					"nr.entryPoint":    true,
-					"parentId":         "560ccffb087d1906",
-					"priority":         internal.MatchAnything,
-					"sampled":          true,
-					"traceId":          "050c91b77efca9b0ef38b30c182355ce",
-					"tracingVendors":   "a,b", // ensures both headers read
-					"transactionId":    "52fdfc072182654f",
-					"trustedParentId":  "1234567890123456",
+			app.ExpectSpanEvents(t, []internal.WantEvent{
+				{
+					Intrinsics: map[string]interface{}{
+						"category":         "generic",
+						"guid":             "9566c74d10d1e2c6",
+						"name":             "OtherTransaction/Go/hello",
+						"transaction.name": "OtherTransaction/Go/hello",
+						"nr.entryPoint":    true,
+						"parentId":         "560ccffb087d1906",
+						"priority":         internal.MatchAnything,
+						"sampled":          true,
+						"traceId":          "050c91b77efca9b0ef38b30c182355ce",
+						"tracingVendors":   "a,b", // ensures both headers read
+						"transactionId":    "52fdfc072182654f",
+						"trustedParentId":  "1234567890123456",
+					},
 				},
-			}})
+			})
 		})
 	}
 }

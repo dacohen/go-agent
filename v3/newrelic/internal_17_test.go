@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/newrelic/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal"
 )
 
 func myErrorHandler(w http.ResponseWriter, req *http.Request) {
@@ -30,22 +30,26 @@ func TestWrapHandleFunc(t *testing.T) {
 		t.Error(out)
 	}
 
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName: "WebTransaction/Go/GET /hello",
-		Msg:     "my msg",
-		Klass:   "newrelic.myError",
-	}})
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "newrelic.myError",
-			"error.message":   "my msg",
-			"transactionName": "WebTransaction/Go/GET /hello",
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName: "WebTransaction/Go/GET /hello",
+			Msg:     "my msg",
+			Klass:   "newrelic.myError",
 		},
-		AgentAttributes: mergeAttributes(helloRequestAttributes, map[string]interface{}{
-			"httpResponseCode": "200",
-			"http.statusCode":  "200",
-		}),
-	}})
+	})
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "newrelic.myError",
+				"error.message":   "my msg",
+				"transactionName": "WebTransaction/Go/GET /hello",
+			},
+			AgentAttributes: mergeAttributes(helloRequestAttributes, map[string]interface{}{
+				"httpResponseCode": "200",
+				"http.statusCode":  "200",
+			}),
+		},
+	})
 	app.ExpectMetrics(t, []internal.WantMetric{
 		{Name: "WebTransaction/Go/GET /hello", Scope: "", Forced: true, Data: nil},
 		{Name: "WebTransaction", Scope: "", Forced: true, Data: nil},
@@ -72,22 +76,26 @@ func TestWrapHandle(t *testing.T) {
 		t.Error(out)
 	}
 
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName: "WebTransaction/Go/GET /hello",
-		Msg:     "my msg",
-		Klass:   "newrelic.myError",
-	}})
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "newrelic.myError",
-			"error.message":   "my msg",
-			"transactionName": "WebTransaction/Go/GET /hello",
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName: "WebTransaction/Go/GET /hello",
+			Msg:     "my msg",
+			Klass:   "newrelic.myError",
 		},
-		AgentAttributes: mergeAttributes(helloRequestAttributes, map[string]interface{}{
-			"httpResponseCode": "200",
-			"http.statusCode":  "200",
-		}),
-	}})
+	})
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "newrelic.myError",
+				"error.message":   "my msg",
+				"transactionName": "WebTransaction/Go/GET /hello",
+			},
+			AgentAttributes: mergeAttributes(helloRequestAttributes, map[string]interface{}{
+				"httpResponseCode": "200",
+				"http.statusCode":  "200",
+			}),
+		},
+	})
 	app.ExpectMetrics(t, []internal.WantMetric{
 		{Name: "WebTransaction/Go/GET /hello", Scope: "", Forced: true, Data: nil},
 		{Name: "WebTransaction", Scope: "", Forced: true, Data: nil},
@@ -165,31 +173,35 @@ func TestRoundTripper(t *testing.T) {
 		{Name: "Supportability/DistributedTrace/CreatePayload/Success", Scope: "", Data: nil},
 		{Name: "Supportability/TraceContext/Create/Success", Scope: "", Data: nil},
 	}, backgroundErrorMetrics...))
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":       "newrelic.myError",
-			"error.message":     "my msg",
-			"spanId":            "4981855ad8681d0d",
-			"transactionName":   "OtherTransaction/Go/hello",
-			"externalCallCount": 1,
-			"externalDuration":  internal.MatchAnything,
-			"guid":              internal.MatchAnything,
-			"traceId":           internal.MatchAnything,
-			"priority":          internal.MatchAnything,
-			"sampled":           internal.MatchAnything,
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":       "newrelic.myError",
+				"error.message":     "my msg",
+				"spanId":            "4981855ad8681d0d",
+				"transactionName":   "OtherTransaction/Go/hello",
+				"externalCallCount": 1,
+				"externalDuration":  internal.MatchAnything,
+				"guid":              internal.MatchAnything,
+				"traceId":           internal.MatchAnything,
+				"priority":          internal.MatchAnything,
+				"sampled":           internal.MatchAnything,
+			},
 		},
-	}})
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"name":              "OtherTransaction/Go/hello",
-			"externalCallCount": 1,
-			"externalDuration":  internal.MatchAnything,
-			"guid":              internal.MatchAnything,
-			"traceId":           internal.MatchAnything,
-			"priority":          internal.MatchAnything,
-			"sampled":           internal.MatchAnything,
+	})
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"name":              "OtherTransaction/Go/hello",
+				"externalCallCount": 1,
+				"externalDuration":  internal.MatchAnything,
+				"guid":              internal.MatchAnything,
+				"traceId":           internal.MatchAnything,
+				"priority":          internal.MatchAnything,
+				"sampled":           internal.MatchAnything,
+			},
 		},
-	}})
+	})
 }
 
 func TestRoundTripperOldCAT(t *testing.T) {
@@ -228,25 +240,29 @@ func TestRoundTripperOldCAT(t *testing.T) {
 		{Name: "External/example.com/all", Scope: "", Forced: false, Data: nil},
 		{Name: "External/example.com/http/GET", Scope: scope, Forced: false, Data: nil},
 	}, backgroundErrorMetrics...))
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":       "newrelic.myError",
-			"error.message":     "my msg",
-			"transactionName":   "OtherTransaction/Go/hello",
-			"externalCallCount": 1,
-			"externalDuration":  internal.MatchAnything,
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":       "newrelic.myError",
+				"error.message":     "my msg",
+				"transactionName":   "OtherTransaction/Go/hello",
+				"externalCallCount": 1,
+				"externalDuration":  internal.MatchAnything,
+			},
 		},
-	}})
-	app.ExpectTxnEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"name":              "OtherTransaction/Go/hello",
-			"externalCallCount": 1,
-			"externalDuration":  internal.MatchAnything,
-			"nr.tripId":         internal.MatchAnything,
-			"nr.guid":           internal.MatchAnything,
-			"nr.pathHash":       internal.MatchAnything,
+	})
+	app.ExpectTxnEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"name":              "OtherTransaction/Go/hello",
+				"externalCallCount": 1,
+				"externalDuration":  internal.MatchAnything,
+				"nr.tripId":         internal.MatchAnything,
+				"nr.guid":           internal.MatchAnything,
+				"nr.pathHash":       internal.MatchAnything,
+			},
 		},
-	}})
+	})
 }
 
 func TestRoundTripperRace(t *testing.T) {

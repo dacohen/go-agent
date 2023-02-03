@@ -6,7 +6,7 @@ package newrelic
 import (
 	"testing"
 
-	"github.com/newrelic/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal"
 )
 
 // Check Default Value
@@ -28,7 +28,8 @@ func TestCustomLimitsBasic(t *testing.T) {
 
 	// Check if custom event queue capacity == rate
 	if customEventRate != testApp.app.testHarvest.CustomEvents.capacity() {
-		t.Errorf("Custom Events Rate is not equal to harvest: expected %d, actual %d", customEventRate, testApp.app.testHarvest.CustomEvents.capacity())
+		t.Errorf("Custom Events Rate is not equal to harvest: expected %d, actual %d", customEventRate,
+			testApp.app.testHarvest.CustomEvents.capacity())
 	}
 }
 func TestCustomEventLimitUserSet(t *testing.T) {
@@ -47,7 +48,8 @@ func TestCustomEventLimitUserSet(t *testing.T) {
 	customEventRate := limit / (60 / internal.CustomEventHarvestsPerMinute)
 
 	if customEventRate != testApp.app.testHarvest.CustomEvents.capacity() {
-		t.Errorf("Custom Events Rate is not equal to harvest: expected %d, actual %d", customEventRate, testApp.app.testHarvest.CustomEvents.capacity())
+		t.Errorf("Custom Events Rate is not equal to harvest: expected %d, actual %d", customEventRate,
+			testApp.app.testHarvest.CustomEvents.capacity())
 	}
 }
 
@@ -69,7 +71,8 @@ func TestCustomLimitEnthusiast(t *testing.T) {
 
 	// Check if custom event queue capacity == rate
 	if customEventRate != testApp.app.testHarvest.CustomEvents.capacity() {
-		t.Errorf("Custom Events Rate is not equal to harvest: expected %d, actual %d", customEventRate, testApp.app.testHarvest.CustomEvents.capacity())
+		t.Errorf("Custom Events Rate is not equal to harvest: expected %d, actual %d", customEventRate,
+			testApp.app.testHarvest.CustomEvents.capacity())
 	}
 }
 
@@ -113,6 +116,7 @@ func TestCustomLimitZero(t *testing.T) {
 
 	// Check if custom event queue capacity == rate
 	if customEventRate != testApp.app.testHarvest.CustomEvents.capacity() {
-		t.Errorf("Custom Events Rate is not equal to harvest: expected %d, actual %d", customEventRate, testApp.app.testHarvest.CustomEvents.capacity())
+		t.Errorf("Custom Events Rate is not equal to harvest: expected %d, actual %d", customEventRate,
+			testApp.app.testHarvest.CustomEvents.capacity())
 	}
 }

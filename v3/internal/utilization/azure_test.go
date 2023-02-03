@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/newrelic/go-agent/v3/internal/crossagent"
+	"github.com/rainforestpay/go-agent/v3/internal/crossagent"
 )
 
 func TestCrossAgentAzure(t *testing.T) {
@@ -38,7 +38,8 @@ func TestCrossAgentAzure(t *testing.T) {
 			}
 
 			if azure.Location != testCase.ExpectedVendorsHash.Azure.Location {
-				t.Fatalf("%s: Location incorrect; expected: %s; got: %s", testCase.TestName, testCase.ExpectedVendorsHash.Azure.Location, azure.Location)
+				t.Fatalf("%s: Location incorrect; expected: %s; got: %s", testCase.TestName, testCase.ExpectedVendorsHash.Azure.Location,
+					azure.Location)
 			}
 
 			if azure.Name != testCase.ExpectedVendorsHash.Azure.Name {

@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/newrelic/go-agent/v3/internal"
-	"github.com/newrelic/go-agent/v3/internal/logger"
+	"github.com/rainforestpay/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal/logger"
 )
 
 var (
@@ -164,11 +164,38 @@ func TestCreateFinalMetrics(t *testing.T) {
 		{Name: instanceReporting, Scope: "", Forced: true, Data: []float64{1, 0, 0, 0, 0, 0}},
 		{Name: "rename_me", Scope: "", Forced: false, Data: []float64{1.0, 0, 0, 0, 0, 0}},
 		{Name: "Supportability/EventHarvest/ReportPeriod", Scope: "", Forced: true, Data: []float64{1, 60, 60, 60, 60, 60 * 60}},
-		{Name: "Supportability/EventHarvest/AnalyticEventData/HarvestLimit", Scope: "", Forced: true, Data: []float64{1, 10 * 1000, 10 * 1000, 10 * 1000, 10 * 1000, 10 * 1000 * 10 * 1000}},
-		{Name: "Supportability/EventHarvest/CustomEventData/HarvestLimit", Scope: "", Forced: true, Data: []float64{1, internal.MaxCustomEvents, internal.MaxCustomEvents, internal.MaxCustomEvents, internal.MaxCustomEvents, internal.MaxCustomEvents * internal.MaxCustomEvents}},
+		{
+			Name:   "Supportability/EventHarvest/AnalyticEventData/HarvestLimit",
+			Scope:  "",
+			Forced: true,
+			Data:   []float64{1, 10 * 1000, 10 * 1000, 10 * 1000, 10 * 1000, 10 * 1000 * 10 * 1000},
+		},
+		{
+			Name:   "Supportability/EventHarvest/CustomEventData/HarvestLimit",
+			Scope:  "",
+			Forced: true,
+			Data: []float64{
+				1,
+				internal.MaxCustomEvents,
+				internal.MaxCustomEvents,
+				internal.MaxCustomEvents,
+				internal.MaxCustomEvents,
+				internal.MaxCustomEvents * internal.MaxCustomEvents,
+			},
+		},
 		{Name: "Supportability/EventHarvest/ErrorEventData/HarvestLimit", Scope: "", Forced: true, Data: []float64{1, 100, 100, 100, 100, 100 * 100}},
-		{Name: "Supportability/EventHarvest/SpanEventData/HarvestLimit", Scope: "", Forced: true, Data: []float64{1, 2000, 2000, 2000, 2000, 2000 * 2000}},
-		{Name: "Supportability/EventHarvest/LogEventData/HarvestLimit", Scope: "", Forced: true, Data: []float64{1, 10000, 10000, 10000, 10000, 10000 * 10000}},
+		{
+			Name:   "Supportability/EventHarvest/SpanEventData/HarvestLimit",
+			Scope:  "",
+			Forced: true,
+			Data:   []float64{1, 2000, 2000, 2000, 2000, 2000 * 2000},
+		},
+		{
+			Name:   "Supportability/EventHarvest/LogEventData/HarvestLimit",
+			Scope:  "",
+			Forced: true,
+			Data:   []float64{1, 10000, 10000, 10000, 10000, 10000 * 10000},
+		},
 		{Name: "Supportability/Go/Version/" + Version, Scope: "", Forced: true, Data: []float64{1, 0, 0, 0, 0, 0}},
 		{Name: "Supportability/Go/Runtime/Version/" + goVersionSimple, Scope: "", Forced: true, Data: []float64{1, 0, 0, 0, 0, 0}},
 		{Name: "Supportability/Go/gRPC/Version/" + grpcVersion, Scope: "", Forced: true, Data: []float64{1, 0, 0, 0, 0, 0}},
@@ -293,10 +320,12 @@ func TestHarvestCustomEventsReady(t *testing.T) {
 	if h.CustomEvents.capacity() != 3 || h.CustomEvents.NumSaved() != 0 {
 		t.Fatal("custom events not correctly reset")
 	}
-	expectCustomEvents(t, ready.CustomEvents, []internal.WantEvent{{
-		Intrinsics:     map[string]interface{}{"type": "myEvent", "timestamp": internal.MatchAnything},
-		UserAttributes: params,
-	}})
+	expectCustomEvents(t, ready.CustomEvents, []internal.WantEvent{
+		{
+			Intrinsics:     map[string]interface{}{"type": "myEvent", "timestamp": internal.MatchAnything},
+			UserAttributes: params,
+		},
+	})
 	expectMetrics(t, h.Metrics, []internal.WantMetric{
 		{Name: customEventsSeen, Scope: "", Forced: true, Data: []float64{1, 0, 0, 0, 0, 0}},
 		{Name: customEventsSent, Scope: "", Forced: true, Data: []float64{1, 0, 0, 0, 0, 0}},
@@ -391,12 +420,14 @@ func TestHarvestTxnEventsReady(t *testing.T) {
 	if h.TxnEvents.capacity() != 3 || h.TxnEvents.NumSaved() != 0 {
 		t.Fatal("txn events not correctly reset")
 	}
-	expectTxnEvents(t, ready.TxnEvents, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"name":      "finalName",
-			"totalTime": 2.0,
+	expectTxnEvents(t, ready.TxnEvents, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"name":      "finalName",
+				"totalTime": 2.0,
+			},
 		},
-	}})
+	})
 	expectMetrics(t, h.Metrics, []internal.WantMetric{
 		{Name: txnEventsSeen, Scope: "", Forced: true, Data: []float64{1, 0, 0, 0, 0, 0}},
 		{Name: txnEventsSent, Scope: "", Forced: true, Data: []float64{1, 0, 0, 0, 0, 0}},
@@ -433,13 +464,15 @@ func TestHarvestErrorEventsReady(t *testing.T) {
 	if h.ErrorEvents.capacity() != 3 || h.ErrorEvents.NumSaved() != 0 {
 		t.Fatal("error events not correctly reset")
 	}
-	expectErrorEvents(t, ready.ErrorEvents, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "klass",
-			"error.message":   "msg",
-			"transactionName": "finalName",
+	expectErrorEvents(t, ready.ErrorEvents, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "klass",
+				"error.message":   "msg",
+				"transactionName": "finalName",
+			},
 		},
-	}})
+	})
 	expectMetrics(t, h.Metrics, []internal.WantMetric{
 		{Name: errorEventsSeen, Scope: "", Forced: true, Data: []float64{1, 0, 0, 0, 0, 0}},
 		{Name: errorEventsSent, Scope: "", Forced: true, Data: []float64{1, 0, 0, 0, 0, 0}},
@@ -473,19 +506,21 @@ func TestHarvestSpanEventsReady(t *testing.T) {
 	if h.SpanEvents.capacity() != 3 || h.SpanEvents.NumSaved() != 0 {
 		t.Fatal("span events not correctly reset")
 	}
-	expectSpanEvents(t, ready.SpanEvents, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"type":          "Span",
-			"name":          "myName",
-			"sampled":       true,
-			"priority":      0.5,
-			"category":      spanCategoryGeneric,
-			"nr.entryPoint": true,
-			"guid":          "guid",
-			"transactionId": "txn-id",
-			"traceId":       "trace-id",
+	expectSpanEvents(t, ready.SpanEvents, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"type":          "Span",
+				"name":          "myName",
+				"sampled":       true,
+				"priority":      0.5,
+				"category":      spanCategoryGeneric,
+				"nr.entryPoint": true,
+				"guid":          "guid",
+				"transactionId": "txn-id",
+				"traceId":       "trace-id",
+			},
 		},
-	}})
+	})
 	expectMetrics(t, h.Metrics, []internal.WantMetric{
 		{Name: spanEventsSeen, Scope: "", Forced: true, Data: []float64{1, 0, 0, 0, 0, 0}},
 		{Name: spanEventsSent, Scope: "", Forced: true, Data: []float64{1, 0, 0, 0, 0, 0}},
@@ -540,24 +575,30 @@ func TestHarvestMetricsTracesReady(t *testing.T) {
 	})
 	expectMetrics(t, h.Metrics, []internal.WantMetric{})
 
-	expectErrors(t, ready.ErrorTraces, []internal.WantError{{
-		TxnName: "finalName",
-		Msg:     "msg",
-		Klass:   "klass",
-	}})
+	expectErrors(t, ready.ErrorTraces, []internal.WantError{
+		{
+			TxnName: "finalName",
+			Msg:     "msg",
+			Klass:   "klass",
+		},
+	})
 	expectErrors(t, h.ErrorTraces, []internal.WantError{})
 
-	expectSlowQueries(t, ready.SlowSQLs, []internal.WantSlowQuery{{
-		Count:      1,
-		MetricName: "Datastore/statement/MySQL/users/INSERT",
-		Query:      "INSERT users",
-		TxnName:    "finalName",
-	}})
+	expectSlowQueries(t, ready.SlowSQLs, []internal.WantSlowQuery{
+		{
+			Count:      1,
+			MetricName: "Datastore/statement/MySQL/users/INSERT",
+			Query:      "INSERT users",
+			TxnName:    "finalName",
+		},
+	})
 	expectSlowQueries(t, h.SlowSQLs, []internal.WantSlowQuery{})
 
-	expectTxnTraces(t, ready.TxnTraces, []internal.WantTxnTrace{{
-		MetricName: "WebTransaction/Go/hello",
-	}})
+	expectTxnTraces(t, ready.TxnTraces, []internal.WantTxnTrace{
+		{
+			MetricName: "WebTransaction/Go/hello",
+		},
+	})
 	expectTxnTraces(t, h.TxnTraces, []internal.WantTxnTrace{})
 }
 
@@ -639,13 +680,15 @@ func TestMergeFailedHarvest(t *testing.T) {
 	expectMetrics(t, h.Metrics, []internal.WantMetric{
 		{Name: "zip", Scope: "", Forced: true, Data: []float64{1, 0, 0, 0, 0, 0}},
 	})
-	expectCustomEvents(t, h.CustomEvents, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"type":      "myEvent",
-			"timestamp": internal.MatchAnything,
+	expectCustomEvents(t, h.CustomEvents, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"type":      "myEvent",
+				"timestamp": internal.MatchAnything,
+			},
+			UserAttributes: customEventParams,
 		},
-		UserAttributes: customEventParams,
-	}})
+	})
 	expectLogEvents(t, h.LogEvents, []internal.WantLog{
 		{
 			Severity:  logEvent.severity,
@@ -655,37 +698,45 @@ func TestMergeFailedHarvest(t *testing.T) {
 			Timestamp: logEvent.timestamp,
 		},
 	})
-	expectErrorEvents(t, h.ErrorEvents, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "klass",
-			"error.message":   "msg",
-			"transactionName": "finalName",
+	expectErrorEvents(t, h.ErrorEvents, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "klass",
+				"error.message":   "msg",
+				"transactionName": "finalName",
+			},
 		},
-	}})
-	expectTxnEvents(t, h.TxnEvents, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"name":      "finalName",
-			"totalTime": 2.0,
+	})
+	expectTxnEvents(t, h.TxnEvents, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"name":      "finalName",
+				"totalTime": 2.0,
+			},
 		},
-	}})
-	expectSpanEvents(t, h.SpanEvents, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"type":          "Span",
-			"name":          "myName",
-			"sampled":       true,
-			"priority":      0.5,
-			"category":      spanCategoryGeneric,
-			"nr.entryPoint": true,
-			"guid":          "guid",
-			"transactionId": "txn-id",
-			"traceId":       "trace-id",
+	})
+	expectSpanEvents(t, h.SpanEvents, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"type":          "Span",
+				"name":          "myName",
+				"sampled":       true,
+				"priority":      0.5,
+				"category":      spanCategoryGeneric,
+				"nr.entryPoint": true,
+				"guid":          "guid",
+				"transactionId": "txn-id",
+				"traceId":       "trace-id",
+			},
 		},
-	}})
-	expectErrors(t, h.ErrorTraces, []internal.WantError{{
-		TxnName: "finalName",
-		Msg:     "msg",
-		Klass:   "klass",
-	}})
+	})
+	expectErrors(t, h.ErrorTraces, []internal.WantError{
+		{
+			TxnName: "finalName",
+			Msg:     "msg",
+			Klass:   "klass",
+		},
+	})
 
 	nextHarvest := newHarvest(start2, testHarvestCfgr)
 	if start2 != nextHarvest.Metrics.metricPeriodStart {
@@ -720,13 +771,15 @@ func TestMergeFailedHarvest(t *testing.T) {
 	expectMetrics(t, nextHarvest.Metrics, []internal.WantMetric{
 		{Name: "zip", Scope: "", Forced: true, Data: []float64{1, 0, 0, 0, 0, 0}},
 	})
-	expectCustomEvents(t, nextHarvest.CustomEvents, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"type":      "myEvent",
-			"timestamp": internal.MatchAnything,
+	expectCustomEvents(t, nextHarvest.CustomEvents, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"type":      "myEvent",
+				"timestamp": internal.MatchAnything,
+			},
+			UserAttributes: customEventParams,
 		},
-		UserAttributes: customEventParams,
-	}})
+	})
 	expectLogEvents(t, nextHarvest.LogEvents, []internal.WantLog{
 		{
 			Severity:  logEvent.severity,
@@ -736,32 +789,38 @@ func TestMergeFailedHarvest(t *testing.T) {
 			Timestamp: logEvent.timestamp,
 		},
 	})
-	expectErrorEvents(t, nextHarvest.ErrorEvents, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "klass",
-			"error.message":   "msg",
-			"transactionName": "finalName",
+	expectErrorEvents(t, nextHarvest.ErrorEvents, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "klass",
+				"error.message":   "msg",
+				"transactionName": "finalName",
+			},
 		},
-	}})
-	expectTxnEvents(t, nextHarvest.TxnEvents, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"name":      "finalName",
-			"totalTime": 2.0,
+	})
+	expectTxnEvents(t, nextHarvest.TxnEvents, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"name":      "finalName",
+				"totalTime": 2.0,
+			},
 		},
-	}})
-	expectSpanEvents(t, h.SpanEvents, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"type":          "Span",
-			"name":          "myName",
-			"sampled":       true,
-			"priority":      0.5,
-			"category":      spanCategoryGeneric,
-			"nr.entryPoint": true,
-			"guid":          "guid",
-			"transactionId": "txn-id",
-			"traceId":       "trace-id",
+	})
+	expectSpanEvents(t, h.SpanEvents, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"type":          "Span",
+				"name":          "myName",
+				"sampled":       true,
+				"priority":      0.5,
+				"category":      spanCategoryGeneric,
+				"nr.entryPoint": true,
+				"guid":          "guid",
+				"transactionId": "txn-id",
+				"traceId":       "trace-id",
+			},
 		},
-	}})
+	})
 	expectErrors(t, nextHarvest.ErrorTraces, []internal.WantError{})
 }
 
@@ -796,7 +855,12 @@ func TestCreateTxnMetrics(t *testing.T) {
 		{Name: apdexRollup, Scope: "", Forced: true, Data: []float64{0, 1, 0, 2, 2, 0}},
 		{Name: "Apdex/zip/zap", Scope: "", Forced: false, Data: []float64{0, 1, 0, 2, 2, 0}},
 		{Name: "DurationByCaller/Unknown/Unknown/Unknown/Unknown/all", Scope: "", Forced: false, Data: []float64{1, 123, 123, 123, 123, 123 * 123}},
-		{Name: "DurationByCaller/Unknown/Unknown/Unknown/Unknown/allWeb", Scope: "", Forced: false, Data: []float64{1, 123, 123, 123, 123, 123 * 123}},
+		{
+			Name:   "DurationByCaller/Unknown/Unknown/Unknown/Unknown/allWeb",
+			Scope:  "",
+			Forced: false,
+			Data:   []float64{1, 123, 123, 123, 123, 123 * 123},
+		},
 		{Name: "ErrorsByCaller/Unknown/Unknown/Unknown/Unknown/all", Scope: "", Forced: false, Data: []float64{1, 0, 0, 0, 0, 0}},
 		{Name: "ErrorsByCaller/Unknown/Unknown/Unknown/Unknown/allWeb", Scope: "", Forced: false, Data: []float64{1, 0, 0, 0, 0, 0}},
 	})
@@ -817,7 +881,12 @@ func TestCreateTxnMetrics(t *testing.T) {
 		{Name: apdexRollup, Scope: "", Forced: true, Data: []float64{0, 1, 0, 2, 2, 0}},
 		{Name: "Apdex/zip/zap", Scope: "", Forced: false, Data: []float64{0, 1, 0, 2, 2, 0}},
 		{Name: "DurationByCaller/Unknown/Unknown/Unknown/Unknown/all", Scope: "", Forced: false, Data: []float64{1, 123, 123, 123, 123, 123 * 123}},
-		{Name: "DurationByCaller/Unknown/Unknown/Unknown/Unknown/allWeb", Scope: "", Forced: false, Data: []float64{1, 123, 123, 123, 123, 123 * 123}},
+		{
+			Name:   "DurationByCaller/Unknown/Unknown/Unknown/Unknown/allWeb",
+			Scope:  "",
+			Forced: false,
+			Data:   []float64{1, 123, 123, 123, 123, 123 * 123},
+		},
 	})
 
 	args.FinalName = backgroundName
@@ -836,7 +905,12 @@ func TestCreateTxnMetrics(t *testing.T) {
 		{Name: "Errors/allOther", Scope: "", Forced: true, Data: []float64{1, 0, 0, 0, 0, 0}},
 		{Name: "Errors/" + backgroundName, Scope: "", Forced: true, Data: []float64{1, 0, 0, 0, 0, 0}},
 		{Name: "DurationByCaller/Unknown/Unknown/Unknown/Unknown/all", Scope: "", Forced: false, Data: []float64{1, 123, 123, 123, 123, 123 * 123}},
-		{Name: "DurationByCaller/Unknown/Unknown/Unknown/Unknown/allOther", Scope: "", Forced: false, Data: []float64{1, 123, 123, 123, 123, 123 * 123}},
+		{
+			Name:   "DurationByCaller/Unknown/Unknown/Unknown/Unknown/allOther",
+			Scope:  "",
+			Forced: false,
+			Data:   []float64{1, 123, 123, 123, 123, 123 * 123},
+		},
 		{Name: "ErrorsByCaller/Unknown/Unknown/Unknown/Unknown/all", Scope: "", Forced: false, Data: []float64{1, 0, 0, 0, 0, 0}},
 		{Name: "ErrorsByCaller/Unknown/Unknown/Unknown/Unknown/allOther", Scope: "", Forced: false, Data: []float64{1, 0, 0, 0, 0, 0}},
 	})
@@ -857,7 +931,12 @@ func TestCreateTxnMetrics(t *testing.T) {
 		{Name: "OtherTransactionTotalTime/zip/zap", Scope: "", Forced: false, Data: []float64{1, 150, 150, 150, 150, 150 * 150}},
 		{Name: "ErrorsExpected/all", Scope: "", Forced: true, Data: []float64{1, 0, 0, 0, 0, 0}},
 		{Name: "DurationByCaller/Unknown/Unknown/Unknown/Unknown/all", Scope: "", Forced: false, Data: []float64{1, 123, 123, 123, 123, 123 * 123}},
-		{Name: "DurationByCaller/Unknown/Unknown/Unknown/Unknown/allOther", Scope: "", Forced: false, Data: []float64{1, 123, 123, 123, 123, 123 * 123}},
+		{
+			Name:   "DurationByCaller/Unknown/Unknown/Unknown/Unknown/allOther",
+			Scope:  "",
+			Forced: false,
+			Data:   []float64{1, 123, 123, 123, 123, 123 * 123},
+		},
 		{Name: "ErrorsByCaller/Unknown/Unknown/Unknown/Unknown/all", Scope: "", Forced: false, Data: []float64{1, 0, 0, 0, 0, 0}},
 		{Name: "ErrorsByCaller/Unknown/Unknown/Unknown/Unknown/allOther", Scope: "", Forced: false, Data: []float64{1, 0, 0, 0, 0, 0}},
 	})
@@ -876,7 +955,12 @@ func TestCreateTxnMetrics(t *testing.T) {
 		{Name: "OtherTransactionTotalTime", Scope: "", Forced: true, Data: []float64{1, 150, 150, 150, 150, 150 * 150}},
 		{Name: "OtherTransactionTotalTime/zip/zap", Scope: "", Forced: false, Data: []float64{1, 150, 150, 150, 150, 150 * 150}},
 		{Name: "DurationByCaller/Unknown/Unknown/Unknown/Unknown/all", Scope: "", Forced: false, Data: []float64{1, 123, 123, 123, 123, 123 * 123}},
-		{Name: "DurationByCaller/Unknown/Unknown/Unknown/Unknown/allOther", Scope: "", Forced: false, Data: []float64{1, 123, 123, 123, 123, 123 * 123}},
+		{
+			Name:   "DurationByCaller/Unknown/Unknown/Unknown/Unknown/allOther",
+			Scope:  "",
+			Forced: false,
+			Data:   []float64{1, 123, 123, 123, 123, 123 * 123},
+		},
 	})
 
 }

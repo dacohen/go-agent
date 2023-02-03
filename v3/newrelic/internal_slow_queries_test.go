@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/newrelic/go-agent/v3/internal"
-	"github.com/newrelic/go-agent/v3/internal/crossagent"
+	"github.com/rainforestpay/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal/crossagent"
 )
 
 func TestSlowQueryBasic(t *testing.T) {
@@ -30,16 +30,18 @@ func TestSlowQueryBasic(t *testing.T) {
 	s1.End()
 	txn.End()
 
-	app.ExpectSlowQueries(t, []internal.WantSlowQuery{{
-		Count:        1,
-		MetricName:   "Datastore/statement/MySQL/users/INSERT",
-		Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
-		TxnName:      "WebTransaction/Go/hello",
-		TxnURL:       "/hello",
-		DatabaseName: "",
-		Host:         "",
-		PortPathOrID: "",
-	}})
+	app.ExpectSlowQueries(t, []internal.WantSlowQuery{
+		{
+			Count:        1,
+			MetricName:   "Datastore/statement/MySQL/users/INSERT",
+			Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
+			TxnName:      "WebTransaction/Go/hello",
+			TxnURL:       "/hello",
+			DatabaseName: "",
+			Host:         "",
+			PortPathOrID: "",
+		},
+	})
 }
 
 func TestSlowQueryLocallyDisabled(t *testing.T) {
@@ -128,16 +130,18 @@ func TestSlowQueryDatabaseProvided(t *testing.T) {
 	s1.End()
 	txn.End()
 
-	app.ExpectSlowQueries(t, []internal.WantSlowQuery{{
-		Count:        1,
-		MetricName:   "Datastore/statement/MySQL/users/INSERT",
-		Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
-		TxnName:      "WebTransaction/Go/hello",
-		TxnURL:       "/hello",
-		DatabaseName: "my_database",
-		Host:         "",
-		PortPathOrID: "",
-	}})
+	app.ExpectSlowQueries(t, []internal.WantSlowQuery{
+		{
+			Count:        1,
+			MetricName:   "Datastore/statement/MySQL/users/INSERT",
+			Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
+			TxnName:      "WebTransaction/Go/hello",
+			TxnURL:       "/hello",
+			DatabaseName: "my_database",
+			Host:         "",
+			PortPathOrID: "",
+		},
+	})
 }
 
 func TestSlowQueryHostProvided(t *testing.T) {
@@ -159,16 +163,18 @@ func TestSlowQueryHostProvided(t *testing.T) {
 	s1.End()
 	txn.End()
 
-	app.ExpectSlowQueries(t, []internal.WantSlowQuery{{
-		Count:        1,
-		MetricName:   "Datastore/statement/MySQL/users/INSERT",
-		Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
-		TxnName:      "WebTransaction/Go/hello",
-		TxnURL:       "/hello",
-		DatabaseName: "",
-		Host:         "db-server-1",
-		PortPathOrID: "unknown",
-	}})
+	app.ExpectSlowQueries(t, []internal.WantSlowQuery{
+		{
+			Count:        1,
+			MetricName:   "Datastore/statement/MySQL/users/INSERT",
+			Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
+			TxnName:      "WebTransaction/Go/hello",
+			TxnURL:       "/hello",
+			DatabaseName: "",
+			Host:         "db-server-1",
+			PortPathOrID: "unknown",
+		},
+	})
 	scope := "WebTransaction/Go/hello"
 	app.ExpectMetrics(t, append([]internal.WantMetric{
 		{Name: "Datastore/all", Scope: "", Forced: true, Data: nil},
@@ -201,16 +207,18 @@ func TestSlowQueryPortProvided(t *testing.T) {
 	s1.End()
 	txn.End()
 
-	app.ExpectSlowQueries(t, []internal.WantSlowQuery{{
-		Count:        1,
-		MetricName:   "Datastore/statement/MySQL/users/INSERT",
-		Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
-		TxnName:      "WebTransaction/Go/hello",
-		TxnURL:       "/hello",
-		DatabaseName: "",
-		Host:         "unknown",
-		PortPathOrID: "98021",
-	}})
+	app.ExpectSlowQueries(t, []internal.WantSlowQuery{
+		{
+			Count:        1,
+			MetricName:   "Datastore/statement/MySQL/users/INSERT",
+			Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
+			TxnName:      "WebTransaction/Go/hello",
+			TxnURL:       "/hello",
+			DatabaseName: "",
+			Host:         "unknown",
+			PortPathOrID: "98021",
+		},
+	})
 	scope := "WebTransaction/Go/hello"
 	app.ExpectMetrics(t, append([]internal.WantMetric{
 		{Name: "Datastore/all", Scope: "", Forced: true, Data: nil},
@@ -244,16 +252,18 @@ func TestSlowQueryHostPortProvided(t *testing.T) {
 	s1.End()
 	txn.End()
 
-	app.ExpectSlowQueries(t, []internal.WantSlowQuery{{
-		Count:        1,
-		MetricName:   "Datastore/statement/MySQL/users/INSERT",
-		Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
-		TxnName:      "WebTransaction/Go/hello",
-		TxnURL:       "/hello",
-		DatabaseName: "",
-		Host:         "db-server-1",
-		PortPathOrID: "98021",
-	}})
+	app.ExpectSlowQueries(t, []internal.WantSlowQuery{
+		{
+			Count:        1,
+			MetricName:   "Datastore/statement/MySQL/users/INSERT",
+			Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
+			TxnName:      "WebTransaction/Go/hello",
+			TxnURL:       "/hello",
+			DatabaseName: "",
+			Host:         "db-server-1",
+			PortPathOrID: "98021",
+		},
+	})
 	scope := "WebTransaction/Go/hello"
 	app.ExpectMetrics(t, append([]internal.WantMetric{
 		{Name: "Datastore/all", Scope: "", Forced: true, Data: nil},
@@ -301,25 +311,26 @@ func TestSlowQueryAggregation(t *testing.T) {
 	ds.End()
 	txn.End()
 
-	app.ExpectSlowQueries(t, []internal.WantSlowQuery{{
-		Count:        2,
-		MetricName:   "Datastore/statement/MySQL/users/INSERT",
-		Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
-		TxnName:      "WebTransaction/Go/hello",
-		TxnURL:       "/hello",
-		DatabaseName: "",
-		Host:         "",
-		PortPathOrID: "",
-	}, {
-		Count:        1,
-		MetricName:   "Datastore/statement/Postgres/products/INSERT",
-		Query:        "INSERT INTO products (name, price) VALUES ($1, $2)",
-		TxnName:      "WebTransaction/Go/hello",
-		TxnURL:       "/hello",
-		DatabaseName: "",
-		Host:         "",
-		PortPathOrID: "",
-	},
+	app.ExpectSlowQueries(t, []internal.WantSlowQuery{
+		{
+			Count:        2,
+			MetricName:   "Datastore/statement/MySQL/users/INSERT",
+			Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
+			TxnName:      "WebTransaction/Go/hello",
+			TxnURL:       "/hello",
+			DatabaseName: "",
+			Host:         "",
+			PortPathOrID: "",
+		}, {
+			Count:        1,
+			MetricName:   "Datastore/statement/Postgres/products/INSERT",
+			Query:        "INSERT INTO products (name, price) VALUES ($1, $2)",
+			TxnName:      "WebTransaction/Go/hello",
+			TxnURL:       "/hello",
+			DatabaseName: "",
+			Host:         "",
+			PortPathOrID: "",
+		},
 	})
 }
 
@@ -340,16 +351,18 @@ func TestSlowQueryMissingQuery(t *testing.T) {
 	s1.End()
 	txn.End()
 
-	app.ExpectSlowQueries(t, []internal.WantSlowQuery{{
-		Count:        1,
-		MetricName:   "Datastore/statement/MySQL/users/INSERT",
-		Query:        "'INSERT' on 'users' using 'MySQL'",
-		TxnName:      "WebTransaction/Go/hello",
-		TxnURL:       "/hello",
-		DatabaseName: "",
-		Host:         "",
-		PortPathOrID: "",
-	}})
+	app.ExpectSlowQueries(t, []internal.WantSlowQuery{
+		{
+			Count:        1,
+			MetricName:   "Datastore/statement/MySQL/users/INSERT",
+			Query:        "'INSERT' on 'users' using 'MySQL'",
+			TxnName:      "WebTransaction/Go/hello",
+			TxnURL:       "/hello",
+			DatabaseName: "",
+			Host:         "",
+			PortPathOrID: "",
+		},
+	})
 }
 
 func TestSlowQueryMissingEverything(t *testing.T) {
@@ -366,16 +379,18 @@ func TestSlowQueryMissingEverything(t *testing.T) {
 	s1.End()
 	txn.End()
 
-	app.ExpectSlowQueries(t, []internal.WantSlowQuery{{
-		Count:        1,
-		MetricName:   "Datastore/operation/Unknown/other",
-		Query:        "'other' on 'unknown' using 'Unknown'",
-		TxnName:      "WebTransaction/Go/hello",
-		TxnURL:       "/hello",
-		DatabaseName: "",
-		Host:         "",
-		PortPathOrID: "",
-	}})
+	app.ExpectSlowQueries(t, []internal.WantSlowQuery{
+		{
+			Count:        1,
+			MetricName:   "Datastore/operation/Unknown/other",
+			Query:        "'other' on 'unknown' using 'Unknown'",
+			TxnName:      "WebTransaction/Go/hello",
+			TxnURL:       "/hello",
+			DatabaseName: "",
+			Host:         "",
+			PortPathOrID: "",
+		},
+	})
 	scope := "WebTransaction/Go/hello"
 	app.ExpectMetrics(t, append([]internal.WantMetric{
 		{Name: "Datastore/all", Scope: "", Forced: true, Data: nil},
@@ -410,17 +425,19 @@ func TestSlowQueryWithQueryParameters(t *testing.T) {
 	s1.End()
 	txn.End()
 
-	app.ExpectSlowQueries(t, []internal.WantSlowQuery{{
-		Count:        1,
-		MetricName:   "Datastore/statement/MySQL/users/INSERT",
-		Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
-		TxnName:      "WebTransaction/Go/hello",
-		TxnURL:       "/hello",
-		DatabaseName: "",
-		Host:         "",
-		PortPathOrID: "",
-		Params:       params,
-	}})
+	app.ExpectSlowQueries(t, []internal.WantSlowQuery{
+		{
+			Count:        1,
+			MetricName:   "Datastore/statement/MySQL/users/INSERT",
+			Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
+			TxnName:      "WebTransaction/Go/hello",
+			TxnURL:       "/hello",
+			DatabaseName: "",
+			Host:         "",
+			PortPathOrID: "",
+			Params:       params,
+		},
+	})
 }
 
 func TestSlowQueryHighSecurity(t *testing.T) {
@@ -447,17 +464,19 @@ func TestSlowQueryHighSecurity(t *testing.T) {
 	s1.End()
 	txn.End()
 
-	app.ExpectSlowQueries(t, []internal.WantSlowQuery{{
-		Count:        1,
-		MetricName:   "Datastore/statement/MySQL/users/INSERT",
-		Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
-		TxnName:      "WebTransaction/Go/hello",
-		TxnURL:       "/hello",
-		DatabaseName: "",
-		Host:         "",
-		PortPathOrID: "",
-		Params:       nil,
-	}})
+	app.ExpectSlowQueries(t, []internal.WantSlowQuery{
+		{
+			Count:        1,
+			MetricName:   "Datastore/statement/MySQL/users/INSERT",
+			Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
+			TxnName:      "WebTransaction/Go/hello",
+			TxnURL:       "/hello",
+			DatabaseName: "",
+			Host:         "",
+			PortPathOrID: "",
+			Params:       nil,
+		},
+	})
 }
 
 func TestSlowQuerySecurityPolicyFalse(t *testing.T) {
@@ -488,17 +507,19 @@ func TestSlowQuerySecurityPolicyFalse(t *testing.T) {
 	s1.End()
 	txn.End()
 
-	app.ExpectSlowQueries(t, []internal.WantSlowQuery{{
-		Count:        1,
-		MetricName:   "Datastore/statement/MySQL/users/INSERT",
-		Query:        "'INSERT' on 'users' using 'MySQL'",
-		TxnName:      "WebTransaction/Go/hello",
-		TxnURL:       "/hello",
-		DatabaseName: "",
-		Host:         "",
-		PortPathOrID: "",
-		Params:       nil,
-	}})
+	app.ExpectSlowQueries(t, []internal.WantSlowQuery{
+		{
+			Count:        1,
+			MetricName:   "Datastore/statement/MySQL/users/INSERT",
+			Query:        "'INSERT' on 'users' using 'MySQL'",
+			TxnName:      "WebTransaction/Go/hello",
+			TxnURL:       "/hello",
+			DatabaseName: "",
+			Host:         "",
+			PortPathOrID: "",
+			Params:       nil,
+		},
+	})
 }
 
 func TestSlowQuerySecurityPolicyTrue(t *testing.T) {
@@ -529,17 +550,19 @@ func TestSlowQuerySecurityPolicyTrue(t *testing.T) {
 	s1.End()
 	txn.End()
 
-	app.ExpectSlowQueries(t, []internal.WantSlowQuery{{
-		Count:        1,
-		MetricName:   "Datastore/statement/MySQL/users/INSERT",
-		Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
-		TxnName:      "WebTransaction/Go/hello",
-		TxnURL:       "/hello",
-		DatabaseName: "",
-		Host:         "",
-		PortPathOrID: "",
-		Params:       nil,
-	}})
+	app.ExpectSlowQueries(t, []internal.WantSlowQuery{
+		{
+			Count:        1,
+			MetricName:   "Datastore/statement/MySQL/users/INSERT",
+			Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
+			TxnName:      "WebTransaction/Go/hello",
+			TxnURL:       "/hello",
+			DatabaseName: "",
+			Host:         "",
+			PortPathOrID: "",
+			Params:       nil,
+		},
+	})
 }
 
 func TestSlowQueryInvalidParameters(t *testing.T) {
@@ -568,21 +591,23 @@ func TestSlowQueryInvalidParameters(t *testing.T) {
 	s1.End()
 	txn.End()
 
-	app.ExpectSlowQueries(t, []internal.WantSlowQuery{{
-		Count:        1,
-		MetricName:   "Datastore/statement/MySQL/users/INSERT",
-		Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
-		TxnName:      "WebTransaction/Go/hello",
-		TxnURL:       "/hello",
-		DatabaseName: "",
-		Host:         "",
-		PortPathOrID: "",
-		Params: map[string]interface{}{
-			"str":      "zap",
-			"int":      123,
-			"long-key": strings.Repeat("A", 255),
+	app.ExpectSlowQueries(t, []internal.WantSlowQuery{
+		{
+			Count:        1,
+			MetricName:   "Datastore/statement/MySQL/users/INSERT",
+			Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
+			TxnName:      "WebTransaction/Go/hello",
+			TxnURL:       "/hello",
+			DatabaseName: "",
+			Host:         "",
+			PortPathOrID: "",
+			Params: map[string]interface{}{
+				"str":      "zap",
+				"int":      123,
+				"long-key": strings.Repeat("A", 255),
+			},
 		},
-	}})
+	})
 }
 
 func TestSlowQueryParametersDisabled(t *testing.T) {
@@ -609,17 +634,19 @@ func TestSlowQueryParametersDisabled(t *testing.T) {
 	s1.End()
 	txn.End()
 
-	app.ExpectSlowQueries(t, []internal.WantSlowQuery{{
-		Count:        1,
-		MetricName:   "Datastore/statement/MySQL/users/INSERT",
-		Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
-		TxnName:      "WebTransaction/Go/hello",
-		TxnURL:       "/hello",
-		DatabaseName: "",
-		Host:         "",
-		PortPathOrID: "",
-		Params:       nil,
-	}})
+	app.ExpectSlowQueries(t, []internal.WantSlowQuery{
+		{
+			Count:        1,
+			MetricName:   "Datastore/statement/MySQL/users/INSERT",
+			Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
+			TxnName:      "WebTransaction/Go/hello",
+			TxnURL:       "/hello",
+			DatabaseName: "",
+			Host:         "",
+			PortPathOrID: "",
+			Params:       nil,
+		},
+	})
 }
 
 func TestSlowQueryInstanceDisabled(t *testing.T) {
@@ -642,16 +669,18 @@ func TestSlowQueryInstanceDisabled(t *testing.T) {
 	s1.End()
 	txn.End()
 
-	app.ExpectSlowQueries(t, []internal.WantSlowQuery{{
-		Count:        1,
-		MetricName:   "Datastore/statement/MySQL/users/INSERT",
-		Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
-		TxnName:      "WebTransaction/Go/hello",
-		TxnURL:       "/hello",
-		DatabaseName: "",
-		Host:         "",
-		PortPathOrID: "",
-	}})
+	app.ExpectSlowQueries(t, []internal.WantSlowQuery{
+		{
+			Count:        1,
+			MetricName:   "Datastore/statement/MySQL/users/INSERT",
+			Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
+			TxnName:      "WebTransaction/Go/hello",
+			TxnURL:       "/hello",
+			DatabaseName: "",
+			Host:         "",
+			PortPathOrID: "",
+		},
+	})
 	scope := "WebTransaction/Go/hello"
 	app.ExpectMetrics(t, append([]internal.WantMetric{
 		{Name: "Datastore/all", Scope: "", Forced: true, Data: nil},
@@ -685,16 +714,18 @@ func TestSlowQueryInstanceDisabledLocalhost(t *testing.T) {
 	s1.End()
 	txn.End()
 
-	app.ExpectSlowQueries(t, []internal.WantSlowQuery{{
-		Count:        1,
-		MetricName:   "Datastore/statement/MySQL/users/INSERT",
-		Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
-		TxnName:      "WebTransaction/Go/hello",
-		TxnURL:       "/hello",
-		DatabaseName: "",
-		Host:         "",
-		PortPathOrID: "",
-	}})
+	app.ExpectSlowQueries(t, []internal.WantSlowQuery{
+		{
+			Count:        1,
+			MetricName:   "Datastore/statement/MySQL/users/INSERT",
+			Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
+			TxnName:      "WebTransaction/Go/hello",
+			TxnURL:       "/hello",
+			DatabaseName: "",
+			Host:         "",
+			PortPathOrID: "",
+		},
+	})
 	scope := "WebTransaction/Go/hello"
 	app.ExpectMetrics(t, append([]internal.WantMetric{
 		{Name: "Datastore/all", Scope: "", Forced: true, Data: nil},
@@ -727,16 +758,18 @@ func TestSlowQueryDatabaseNameDisabled(t *testing.T) {
 	s1.End()
 	txn.End()
 
-	app.ExpectSlowQueries(t, []internal.WantSlowQuery{{
-		Count:        1,
-		MetricName:   "Datastore/statement/MySQL/users/INSERT",
-		Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
-		TxnName:      "WebTransaction/Go/hello",
-		TxnURL:       "/hello",
-		DatabaseName: "",
-		Host:         "",
-		PortPathOrID: "",
-	}})
+	app.ExpectSlowQueries(t, []internal.WantSlowQuery{
+		{
+			Count:        1,
+			MetricName:   "Datastore/statement/MySQL/users/INSERT",
+			Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
+			TxnName:      "WebTransaction/Go/hello",
+			TxnURL:       "/hello",
+			DatabaseName: "",
+			Host:         "",
+			PortPathOrID: "",
+		},
+	})
 }
 
 func TestDatastoreAPICrossAgent(t *testing.T) {
@@ -839,16 +872,18 @@ func TestDatastoreAPICrossAgent(t *testing.T) {
 
 		tt := extendValidator(t, tc.TestName)
 		app.ExpectMetrics(tt, metrics)
-		app.ExpectSlowQueries(tt, []internal.WantSlowQuery{{
-			Count:        1,
-			MetricName:   tc.Expectation.Trace.MetricName,
-			TxnName:      scope,
-			DatabaseName: tc.Expectation.Trace.DatabaseName,
-			Host:         expectTraceHost,
-			PortPathOrID: tc.Expectation.Trace.PortPathOrID,
-			TxnURL:       txnURL,
-			Query:        query,
-		}})
+		app.ExpectSlowQueries(tt, []internal.WantSlowQuery{
+			{
+				Count:        1,
+				MetricName:   tc.Expectation.Trace.MetricName,
+				TxnName:      scope,
+				DatabaseName: tc.Expectation.Trace.DatabaseName,
+				Host:         expectTraceHost,
+				PortPathOrID: tc.Expectation.Trace.PortPathOrID,
+				TxnURL:       txnURL,
+				Query:        query,
+			},
+		})
 	}
 }
 
@@ -877,15 +912,17 @@ func TestSlowQueryParamsInvalid(t *testing.T) {
 	})
 	txn.End()
 
-	app.ExpectSlowQueries(t, []internal.WantSlowQuery{{
-		Count:        1,
-		MetricName:   "Datastore/statement/MySQL/users/INSERT",
-		Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
-		TxnName:      "WebTransaction/Go/hello",
-		TxnURL:       "/hello",
-		DatabaseName: "",
-		Host:         "",
-		PortPathOrID: "",
-		Params:       map[string]interface{}{"number": 5},
-	}})
+	app.ExpectSlowQueries(t, []internal.WantSlowQuery{
+		{
+			Count:        1,
+			MetricName:   "Datastore/statement/MySQL/users/INSERT",
+			Query:        "INSERT INTO users (name, age) VALUES ($1, $2)",
+			TxnName:      "WebTransaction/Go/hello",
+			TxnURL:       "/hello",
+			DatabaseName: "",
+			Host:         "",
+			PortPathOrID: "",
+			Params:       map[string]interface{}{"number": 5},
+		},
+	})
 }

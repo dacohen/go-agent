@@ -9,9 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/newrelic/go-agent/v3/internal"
-	"github.com/newrelic/go-agent/v3/internal/cat"
-	"github.com/newrelic/go-agent/v3/internal/logger"
+	"github.com/rainforestpay/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal/cat"
+	"github.com/rainforestpay/go-agent/v3/internal/logger"
 )
 
 func float64Ptr(f float64) *float64 { return &f }
@@ -115,109 +115,113 @@ func TestTxnTrace(t *testing.T) {
 		Trace: txndata.TxnTrace,
 	})
 
-	expectTxnTraces(t, ht, []internal.WantTxnTrace{{
-		DurationMillis:  float64Ptr(20 * 1000.0),
-		MetricName:      "WebTransaction/Go/hello",
-		UserAttributes:  map[string]interface{}{"zap": 123},
-		AgentAttributes: map[string]interface{}{"request.uri": "/url"},
-		Intrinsics: map[string]interface{}{
-			"guid":      "txn-id",
-			"traceId":   "trace-id",
-			"priority":  0.500000,
-			"sampled":   false,
-			"totalTime": 30,
-		},
-		Root: internal.WantTraceSegment{
-			SegmentName:         "ROOT",
-			RelativeStartMillis: 0,
-			RelativeStopMillis:  20000,
-			Attributes:          map[string]interface{}{},
-			Children: []internal.WantTraceSegment{{
-				SegmentName:         "WebTransaction/Go/hello",
+	expectTxnTraces(t, ht, []internal.WantTxnTrace{
+		{
+			DurationMillis:  float64Ptr(20 * 1000.0),
+			MetricName:      "WebTransaction/Go/hello",
+			UserAttributes:  map[string]interface{}{"zap": 123},
+			AgentAttributes: map[string]interface{}{"request.uri": "/url"},
+			Intrinsics: map[string]interface{}{
+				"guid":      "txn-id",
+				"traceId":   "trace-id",
+				"priority":  0.500000,
+				"sampled":   false,
+				"totalTime": 30,
+			},
+			Root: internal.WantTraceSegment{
+				SegmentName:         "ROOT",
 				RelativeStartMillis: 0,
 				RelativeStopMillis:  20000,
-				Attributes:          map[string]interface{}{"exclusive_duration_millis": 20000},
+				Attributes:          map[string]interface{}{},
 				Children: []internal.WantTraceSegment{
 					{
-						SegmentName:         "Custom/t1",
-						RelativeStartMillis: 1000,
-						RelativeStopMillis:  6000,
-						Attributes:          map[string]interface{}{},
+						SegmentName:         "WebTransaction/Go/hello",
+						RelativeStartMillis: 0,
+						RelativeStopMillis:  20000,
+						Attributes:          map[string]interface{}{"exclusive_duration_millis": 20000},
 						Children: []internal.WantTraceSegment{
 							{
-								SegmentName:         "Datastore/statement/MySQL/my_table/SELECT",
-								RelativeStartMillis: 2000,
-								RelativeStopMillis:  3000,
-								Attributes: map[string]interface{}{
-									"db.instance":      "my_db",
-									"peer.hostname":    "db-server-1",
-									"peer.address":     "db-server-1:3306",
-									"db.statement":     "INSERT INTO users (name, age) VALUES ($1, $2)",
-									"query_parameters": "map[zip:1]",
-								},
-								Children: []internal.WantTraceSegment{},
-							},
-							{
-								SegmentName:         "External/example.com/http",
-								RelativeStartMillis: 4000,
-								RelativeStopMillis:  5000,
-								Attributes: map[string]interface{}{
-									"http.url": "http://example.com/zip/zap",
-								},
-								Children: []internal.WantTraceSegment{},
-							},
-						},
-					},
-					{
-						SegmentName:         "Custom/t4",
-						RelativeStartMillis: 7000,
-						RelativeStopMillis:  16000,
-						Attributes:          map[string]interface{}{},
-						Children: []internal.WantTraceSegment{
-							{
-								SegmentName:         "Custom/t5",
-								RelativeStartMillis: 8000,
-								RelativeStopMillis:  11000,
+								SegmentName:         "Custom/t1",
+								RelativeStartMillis: 1000,
+								RelativeStopMillis:  6000,
 								Attributes:          map[string]interface{}{},
 								Children: []internal.WantTraceSegment{
 									{
-										SegmentName:         "Custom/t6",
-										RelativeStartMillis: 9000,
-										RelativeStopMillis:  10000,
+										SegmentName:         "Datastore/statement/MySQL/my_table/SELECT",
+										RelativeStartMillis: 2000,
+										RelativeStopMillis:  3000,
+										Attributes: map[string]interface{}{
+											"db.instance":      "my_db",
+											"peer.hostname":    "db-server-1",
+											"peer.address":     "db-server-1:3306",
+											"db.statement":     "INSERT INTO users (name, age) VALUES ($1, $2)",
+											"query_parameters": "map[zip:1]",
+										},
+										Children: []internal.WantTraceSegment{},
+									},
+									{
+										SegmentName:         "External/example.com/http",
+										RelativeStartMillis: 4000,
+										RelativeStopMillis:  5000,
+										Attributes: map[string]interface{}{
+											"http.url": "http://example.com/zip/zap",
+										},
+										Children: []internal.WantTraceSegment{},
+									},
+								},
+							},
+							{
+								SegmentName:         "Custom/t4",
+								RelativeStartMillis: 7000,
+								RelativeStopMillis:  16000,
+								Attributes:          map[string]interface{}{},
+								Children: []internal.WantTraceSegment{
+									{
+										SegmentName:         "Custom/t5",
+										RelativeStartMillis: 8000,
+										RelativeStopMillis:  11000,
+										Attributes:          map[string]interface{}{},
+										Children: []internal.WantTraceSegment{
+											{
+												SegmentName:         "Custom/t6",
+												RelativeStartMillis: 9000,
+												RelativeStopMillis:  10000,
+												Attributes:          map[string]interface{}{},
+												Children:            []internal.WantTraceSegment{},
+											},
+										},
+									},
+									{
+										SegmentName:         "Datastore/operation/MySQL/SELECT",
+										RelativeStartMillis: 12000,
+										RelativeStopMillis:  13000,
+										Attributes: map[string]interface{}{
+											"db.statement": "'SELECT' on 'unknown' using 'MySQL'",
+										},
+										Children: []internal.WantTraceSegment{},
+									},
+									{
+										SegmentName:         "External/unknown/http",
+										RelativeStartMillis: 14000,
+										RelativeStopMillis:  15000,
 										Attributes:          map[string]interface{}{},
 										Children:            []internal.WantTraceSegment{},
 									},
 								},
 							},
 							{
-								SegmentName:         "Datastore/operation/MySQL/SELECT",
-								RelativeStartMillis: 12000,
-								RelativeStopMillis:  13000,
-								Attributes: map[string]interface{}{
-									"db.statement": "'SELECT' on 'unknown' using 'MySQL'",
-								},
-								Children: []internal.WantTraceSegment{},
-							},
-							{
-								SegmentName:         "External/unknown/http",
-								RelativeStartMillis: 14000,
-								RelativeStopMillis:  15000,
+								SegmentName:         "MessageBroker/Kafka/Topic/Produce/Named/MyTopic",
+								RelativeStartMillis: 17000,
+								RelativeStopMillis:  18000,
 								Attributes:          map[string]interface{}{},
 								Children:            []internal.WantTraceSegment{},
 							},
 						},
 					},
-					{
-						SegmentName:         "MessageBroker/Kafka/Topic/Produce/Named/MyTopic",
-						RelativeStartMillis: 17000,
-						RelativeStopMillis:  18000,
-						Attributes:          map[string]interface{}{},
-						Children:            []internal.WantTraceSegment{},
-					},
 				},
-			}},
+			},
 		},
-	}})
+	})
 }
 
 func TestTxnTraceNoNodes(t *testing.T) {
@@ -245,32 +249,36 @@ func TestTxnTraceNoNodes(t *testing.T) {
 		Trace: txndata.TxnTrace,
 	})
 
-	expectTxnTraces(t, ht, []internal.WantTxnTrace{{
-		DurationMillis:  float64Ptr(20 * 1000.0),
-		MetricName:      "WebTransaction/Go/hello",
-		UserAttributes:  map[string]interface{}{},
-		AgentAttributes: map[string]interface{}{},
-		Intrinsics: map[string]interface{}{
-			"guid":      "txn-id",
-			"traceId":   "trace-id",
-			"priority":  0.500000,
-			"sampled":   false,
-			"totalTime": 30,
-		},
-		Root: internal.WantTraceSegment{
-			SegmentName:         "ROOT",
-			RelativeStartMillis: 0,
-			RelativeStopMillis:  20000,
-			Attributes:          map[string]interface{}{},
-			Children: []internal.WantTraceSegment{{
-				SegmentName:         "WebTransaction/Go/hello",
+	expectTxnTraces(t, ht, []internal.WantTxnTrace{
+		{
+			DurationMillis:  float64Ptr(20 * 1000.0),
+			MetricName:      "WebTransaction/Go/hello",
+			UserAttributes:  map[string]interface{}{},
+			AgentAttributes: map[string]interface{}{},
+			Intrinsics: map[string]interface{}{
+				"guid":      "txn-id",
+				"traceId":   "trace-id",
+				"priority":  0.500000,
+				"sampled":   false,
+				"totalTime": 30,
+			},
+			Root: internal.WantTraceSegment{
+				SegmentName:         "ROOT",
 				RelativeStartMillis: 0,
 				RelativeStopMillis:  20000,
-				Attributes:          map[string]interface{}{"exclusive_duration_millis": 20000},
-				Children:            []internal.WantTraceSegment{},
-			}},
+				Attributes:          map[string]interface{}{},
+				Children: []internal.WantTraceSegment{
+					{
+						SegmentName:         "WebTransaction/Go/hello",
+						RelativeStartMillis: 0,
+						RelativeStopMillis:  20000,
+						Attributes:          map[string]interface{}{"exclusive_duration_millis": 20000},
+						Children:            []internal.WantTraceSegment{},
+					},
+				},
+			},
 		},
-	}})
+	})
 }
 
 func TestTxnTraceAsync(t *testing.T) {
@@ -360,70 +368,74 @@ func TestTxnTraceAsync(t *testing.T) {
 		Trace: txndata.TxnTrace,
 	})
 
-	expectTxnTraces(t, ht, []internal.WantTxnTrace{{
-		DurationMillis:  float64Ptr(20 * 1000.0),
-		MetricName:      "WebTransaction/Go/hello",
-		UserAttributes:  map[string]interface{}{},
-		AgentAttributes: map[string]interface{}{},
-		Intrinsics: map[string]interface{}{
-			"totalTime": 30,
-			"guid":      "txn-id",
-			"traceId":   "trace-id",
-			"priority":  0.500000,
-			"sampled":   false,
-		},
-		Root: internal.WantTraceSegment{
-			SegmentName:         "ROOT",
-			RelativeStartMillis: 0,
-			RelativeStopMillis:  20000,
-			Attributes:          map[string]interface{}{},
-			Children: []internal.WantTraceSegment{{
-				SegmentName:         "WebTransaction/Go/hello",
+	expectTxnTraces(t, ht, []internal.WantTxnTrace{
+		{
+			DurationMillis:  float64Ptr(20 * 1000.0),
+			MetricName:      "WebTransaction/Go/hello",
+			UserAttributes:  map[string]interface{}{},
+			AgentAttributes: map[string]interface{}{},
+			Intrinsics: map[string]interface{}{
+				"totalTime": 30,
+				"guid":      "txn-id",
+				"traceId":   "trace-id",
+				"priority":  0.500000,
+				"sampled":   false,
+			},
+			Root: internal.WantTraceSegment{
+				SegmentName:         "ROOT",
 				RelativeStartMillis: 0,
 				RelativeStopMillis:  20000,
-				Attributes:          map[string]interface{}{"exclusive_duration_millis": 20000},
+				Attributes:          map[string]interface{}{},
 				Children: []internal.WantTraceSegment{
 					{
-						SegmentName:         "Custom/thread1.segment1",
-						RelativeStartMillis: 1000,
-						RelativeStopMillis:  8000,
-						Attributes:          map[string]interface{}{},
+						SegmentName:         "WebTransaction/Go/hello",
+						RelativeStartMillis: 0,
+						RelativeStopMillis:  20000,
+						Attributes:          map[string]interface{}{"exclusive_duration_millis": 20000},
 						Children: []internal.WantTraceSegment{
 							{
-								SegmentName:         "Custom/thread1.segment2",
-								RelativeStartMillis: 2000,
-								RelativeStopMillis:  4000,
+								SegmentName:         "Custom/thread1.segment1",
+								RelativeStartMillis: 1000,
+								RelativeStopMillis:  8000,
+								Attributes:          map[string]interface{}{},
+								Children: []internal.WantTraceSegment{
+									{
+										SegmentName:         "Custom/thread1.segment2",
+										RelativeStartMillis: 2000,
+										RelativeStopMillis:  4000,
+										Attributes:          map[string]interface{}{},
+										Children:            []internal.WantTraceSegment{},
+									},
+								},
+							},
+							{
+								SegmentName:         "Custom/thread2.segment1",
+								RelativeStartMillis: 3000,
+								RelativeStopMillis:  5000,
 								Attributes:          map[string]interface{}{},
 								Children:            []internal.WantTraceSegment{},
 							},
-						},
-					},
-					{
-						SegmentName:         "Custom/thread2.segment1",
-						RelativeStartMillis: 3000,
-						RelativeStopMillis:  5000,
-						Attributes:          map[string]interface{}{},
-						Children:            []internal.WantTraceSegment{},
-					},
-					{
-						SegmentName:         "Custom/thread3.segment1",
-						RelativeStartMillis: 6000,
-						RelativeStopMillis:  10000,
-						Attributes:          map[string]interface{}{},
-						Children: []internal.WantTraceSegment{
 							{
-								SegmentName:         "Custom/thread3.segment2",
-								RelativeStartMillis: 7000,
-								RelativeStopMillis:  9000,
+								SegmentName:         "Custom/thread3.segment1",
+								RelativeStartMillis: 6000,
+								RelativeStopMillis:  10000,
 								Attributes:          map[string]interface{}{},
-								Children:            []internal.WantTraceSegment{},
+								Children: []internal.WantTraceSegment{
+									{
+										SegmentName:         "Custom/thread3.segment2",
+										RelativeStartMillis: 7000,
+										RelativeStopMillis:  9000,
+										Attributes:          map[string]interface{}{},
+										Children:            []internal.WantTraceSegment{},
+									},
+								},
 							},
 						},
 					},
 				},
-			}},
+			},
 		},
-	}})
+	})
 }
 
 func TestTxnTraceOldCAT(t *testing.T) {
@@ -471,37 +483,41 @@ func TestTxnTraceOldCAT(t *testing.T) {
 		Trace: txndata.TxnTrace,
 	})
 
-	expectTxnTraces(t, ht, []internal.WantTxnTrace{{
-		DurationMillis:  float64Ptr(20 * 1000.0),
-		MetricName:      "WebTransaction/Go/hello",
-		UserAttributes:  map[string]interface{}{"zap": 123},
-		AgentAttributes: map[string]interface{}{"request.uri": "/url"},
-		Intrinsics:      map[string]interface{}{"totalTime": 30},
-		Root: internal.WantTraceSegment{
-			SegmentName:         "ROOT",
-			RelativeStartMillis: 0,
-			RelativeStopMillis:  20000,
-			Attributes:          map[string]interface{}{},
-			Children: []internal.WantTraceSegment{{
-				SegmentName:         "WebTransaction/Go/hello",
+	expectTxnTraces(t, ht, []internal.WantTxnTrace{
+		{
+			DurationMillis:  float64Ptr(20 * 1000.0),
+			MetricName:      "WebTransaction/Go/hello",
+			UserAttributes:  map[string]interface{}{"zap": 123},
+			AgentAttributes: map[string]interface{}{"request.uri": "/url"},
+			Intrinsics:      map[string]interface{}{"totalTime": 30},
+			Root: internal.WantTraceSegment{
+				SegmentName:         "ROOT",
 				RelativeStartMillis: 0,
 				RelativeStopMillis:  20000,
-				Attributes:          map[string]interface{}{"exclusive_duration_millis": 20000},
+				Attributes:          map[string]interface{}{},
 				Children: []internal.WantTraceSegment{
 					{
-						SegmentName:         "ExternalTransaction/example.com/1#1/WebTransaction/Go/otherService",
-						RelativeStartMillis: 4000,
-						RelativeStopMillis:  5000,
-						Attributes: map[string]interface{}{
-							"http.url":         "http://example.com/zip/zap",
-							"transaction_guid": "0123456789",
+						SegmentName:         "WebTransaction/Go/hello",
+						RelativeStartMillis: 0,
+						RelativeStopMillis:  20000,
+						Attributes:          map[string]interface{}{"exclusive_duration_millis": 20000},
+						Children: []internal.WantTraceSegment{
+							{
+								SegmentName:         "ExternalTransaction/example.com/1#1/WebTransaction/Go/otherService",
+								RelativeStartMillis: 4000,
+								RelativeStopMillis:  5000,
+								Attributes: map[string]interface{}{
+									"http.url":         "http://example.com/zip/zap",
+									"transaction_guid": "0123456789",
+								},
+								Children: []internal.WantTraceSegment{},
+							},
 						},
-						Children: []internal.WantTraceSegment{},
 					},
 				},
-			}},
+			},
 		},
-	}})
+	})
 }
 
 func TestTxnTraceExcludeURI(t *testing.T) {
@@ -534,32 +550,36 @@ func TestTxnTraceExcludeURI(t *testing.T) {
 		Trace: tr.TxnTrace,
 	})
 
-	expectTxnTraces(t, ht, []internal.WantTxnTrace{{
-		DurationMillis:  float64Ptr(20 * 1000.0),
-		MetricName:      "WebTransaction/Go/hello",
-		UserAttributes:  map[string]interface{}{},
-		AgentAttributes: map[string]interface{}{},
-		Intrinsics: map[string]interface{}{
-			"totalTime": 0,
-			"guid":      "txn-id",
-			"traceId":   "trace-id",
-			"priority":  0.500000,
-			"sampled":   false,
-		},
-		Root: internal.WantTraceSegment{
-			SegmentName:         "ROOT",
-			RelativeStartMillis: 0,
-			RelativeStopMillis:  20000,
-			Attributes:          map[string]interface{}{},
-			Children: []internal.WantTraceSegment{{
-				SegmentName:         "WebTransaction/Go/hello",
+	expectTxnTraces(t, ht, []internal.WantTxnTrace{
+		{
+			DurationMillis:  float64Ptr(20 * 1000.0),
+			MetricName:      "WebTransaction/Go/hello",
+			UserAttributes:  map[string]interface{}{},
+			AgentAttributes: map[string]interface{}{},
+			Intrinsics: map[string]interface{}{
+				"totalTime": 0,
+				"guid":      "txn-id",
+				"traceId":   "trace-id",
+				"priority":  0.500000,
+				"sampled":   false,
+			},
+			Root: internal.WantTraceSegment{
+				SegmentName:         "ROOT",
 				RelativeStartMillis: 0,
 				RelativeStopMillis:  20000,
-				Attributes:          map[string]interface{}{"exclusive_duration_millis": 20000},
-				Children:            []internal.WantTraceSegment{},
-			}},
+				Attributes:          map[string]interface{}{},
+				Children: []internal.WantTraceSegment{
+					{
+						SegmentName:         "WebTransaction/Go/hello",
+						RelativeStartMillis: 0,
+						RelativeStopMillis:  20000,
+						Attributes:          map[string]interface{}{"exclusive_duration_millis": 20000},
+						Children:            []internal.WantTraceSegment{},
+					},
+				},
+			},
 		},
-	}})
+	})
 }
 
 func TestTxnTraceNoSegmentsNoAttributes(t *testing.T) {
@@ -590,32 +610,36 @@ func TestTxnTraceNoSegmentsNoAttributes(t *testing.T) {
 		Trace: txndata.TxnTrace,
 	})
 
-	expectTxnTraces(t, ht, []internal.WantTxnTrace{{
-		DurationMillis:  float64Ptr(20 * 1000.0),
-		MetricName:      "WebTransaction/Go/hello",
-		UserAttributes:  map[string]interface{}{},
-		AgentAttributes: map[string]interface{}{},
-		Intrinsics: map[string]interface{}{
-			"totalTime": 30,
-			"guid":      "txn-id",
-			"traceId":   "trace-id",
-			"priority":  0.500000,
-			"sampled":   false,
-		},
-		Root: internal.WantTraceSegment{
-			SegmentName:         "ROOT",
-			RelativeStartMillis: 0,
-			RelativeStopMillis:  20000,
-			Attributes:          map[string]interface{}{},
-			Children: []internal.WantTraceSegment{{
-				SegmentName:         "WebTransaction/Go/hello",
+	expectTxnTraces(t, ht, []internal.WantTxnTrace{
+		{
+			DurationMillis:  float64Ptr(20 * 1000.0),
+			MetricName:      "WebTransaction/Go/hello",
+			UserAttributes:  map[string]interface{}{},
+			AgentAttributes: map[string]interface{}{},
+			Intrinsics: map[string]interface{}{
+				"totalTime": 30,
+				"guid":      "txn-id",
+				"traceId":   "trace-id",
+				"priority":  0.500000,
+				"sampled":   false,
+			},
+			Root: internal.WantTraceSegment{
+				SegmentName:         "ROOT",
 				RelativeStartMillis: 0,
 				RelativeStopMillis:  20000,
-				Attributes:          map[string]interface{}{"exclusive_duration_millis": 20000},
-				Children:            []internal.WantTraceSegment{},
-			}},
+				Attributes:          map[string]interface{}{},
+				Children: []internal.WantTraceSegment{
+					{
+						SegmentName:         "WebTransaction/Go/hello",
+						RelativeStartMillis: 0,
+						RelativeStopMillis:  20000,
+						Attributes:          map[string]interface{}{"exclusive_duration_millis": 20000},
+						Children:            []internal.WantTraceSegment{},
+					},
+				},
+			},
 		},
-	}})
+	})
 }
 
 func TestTxnTraceSlowestNodesSaved(t *testing.T) {
@@ -657,68 +681,72 @@ func TestTxnTraceSlowestNodesSaved(t *testing.T) {
 		Trace: txndata.TxnTrace,
 	})
 
-	expectTxnTraces(t, ht, []internal.WantTxnTrace{{
-		DurationMillis:  float64Ptr(123000.0),
-		MetricName:      "WebTransaction/Go/hello",
-		UserAttributes:  map[string]interface{}{},
-		AgentAttributes: map[string]interface{}{"request.uri": "/url"},
-		Intrinsics: map[string]interface{}{
-			"totalTime": 200,
-			"guid":      "txn-id",
-			"traceId":   "trace-id",
-			"priority":  0.500000,
-			"sampled":   false,
-		},
-		Root: internal.WantTraceSegment{
-			SegmentName:         "ROOT",
-			RelativeStartMillis: 0,
-			RelativeStopMillis:  123000,
-			Attributes:          map[string]interface{}{},
-			Children: []internal.WantTraceSegment{{
-				SegmentName:         "WebTransaction/Go/hello",
+	expectTxnTraces(t, ht, []internal.WantTxnTrace{
+		{
+			DurationMillis:  float64Ptr(123000.0),
+			MetricName:      "WebTransaction/Go/hello",
+			UserAttributes:  map[string]interface{}{},
+			AgentAttributes: map[string]interface{}{"request.uri": "/url"},
+			Intrinsics: map[string]interface{}{
+				"totalTime": 200,
+				"guid":      "txn-id",
+				"traceId":   "trace-id",
+				"priority":  0.500000,
+				"sampled":   false,
+			},
+			Root: internal.WantTraceSegment{
+				SegmentName:         "ROOT",
 				RelativeStartMillis: 0,
 				RelativeStopMillis:  123000,
-				Attributes:          map[string]interface{}{"exclusive_duration_millis": 123000},
+				Attributes:          map[string]interface{}{},
 				Children: []internal.WantTraceSegment{
 					{
-						SegmentName:         "Custom/5",
+						SegmentName:         "WebTransaction/Go/hello",
 						RelativeStartMillis: 0,
-						RelativeStopMillis:  5000,
-						Attributes:          map[string]interface{}{},
-						Children:            []internal.WantTraceSegment{},
-					},
-					{
-						SegmentName:         "Custom/6",
-						RelativeStartMillis: 9000,
-						RelativeStopMillis:  15000,
-						Attributes:          map[string]interface{}{},
-						Children:            []internal.WantTraceSegment{},
-					},
-					{
-						SegmentName:         "Custom/7",
-						RelativeStartMillis: 18000,
-						RelativeStopMillis:  25000,
-						Attributes:          map[string]interface{}{},
-						Children:            []internal.WantTraceSegment{},
-					},
-					{
-						SegmentName:         "Custom/8",
-						RelativeStartMillis: 27000,
-						RelativeStopMillis:  35000,
-						Attributes:          map[string]interface{}{},
-						Children:            []internal.WantTraceSegment{},
-					},
-					{
-						SegmentName:         "Custom/9",
-						RelativeStartMillis: 36000,
-						RelativeStopMillis:  45000,
-						Attributes:          map[string]interface{}{},
-						Children:            []internal.WantTraceSegment{},
+						RelativeStopMillis:  123000,
+						Attributes:          map[string]interface{}{"exclusive_duration_millis": 123000},
+						Children: []internal.WantTraceSegment{
+							{
+								SegmentName:         "Custom/5",
+								RelativeStartMillis: 0,
+								RelativeStopMillis:  5000,
+								Attributes:          map[string]interface{}{},
+								Children:            []internal.WantTraceSegment{},
+							},
+							{
+								SegmentName:         "Custom/6",
+								RelativeStartMillis: 9000,
+								RelativeStopMillis:  15000,
+								Attributes:          map[string]interface{}{},
+								Children:            []internal.WantTraceSegment{},
+							},
+							{
+								SegmentName:         "Custom/7",
+								RelativeStartMillis: 18000,
+								RelativeStopMillis:  25000,
+								Attributes:          map[string]interface{}{},
+								Children:            []internal.WantTraceSegment{},
+							},
+							{
+								SegmentName:         "Custom/8",
+								RelativeStartMillis: 27000,
+								RelativeStopMillis:  35000,
+								Attributes:          map[string]interface{}{},
+								Children:            []internal.WantTraceSegment{},
+							},
+							{
+								SegmentName:         "Custom/9",
+								RelativeStartMillis: 36000,
+								RelativeStopMillis:  45000,
+								Attributes:          map[string]interface{}{},
+								Children:            []internal.WantTraceSegment{},
+							},
+						},
 					},
 				},
-			}},
+			},
 		},
-	}})
+	})
 }
 
 func TestTxnTraceSegmentThreshold(t *testing.T) {
@@ -760,54 +788,58 @@ func TestTxnTraceSegmentThreshold(t *testing.T) {
 		Trace: txndata.TxnTrace,
 	})
 
-	expectTxnTraces(t, ht, []internal.WantTxnTrace{{
-		DurationMillis:  float64Ptr(123000.0),
-		MetricName:      "WebTransaction/Go/hello",
-		UserAttributes:  map[string]interface{}{},
-		AgentAttributes: map[string]interface{}{"request.uri": "/url"},
-		Intrinsics: map[string]interface{}{
-			"totalTime": 200,
-			"guid":      "txn-id",
-			"traceId":   "trace-id",
-			"priority":  0.500000,
-			"sampled":   false,
-		},
-		Root: internal.WantTraceSegment{
-			SegmentName:         "ROOT",
-			RelativeStartMillis: 0,
-			RelativeStopMillis:  123000,
-			Attributes:          map[string]interface{}{},
-			Children: []internal.WantTraceSegment{{
-				SegmentName:         "WebTransaction/Go/hello",
+	expectTxnTraces(t, ht, []internal.WantTxnTrace{
+		{
+			DurationMillis:  float64Ptr(123000.0),
+			MetricName:      "WebTransaction/Go/hello",
+			UserAttributes:  map[string]interface{}{},
+			AgentAttributes: map[string]interface{}{"request.uri": "/url"},
+			Intrinsics: map[string]interface{}{
+				"totalTime": 200,
+				"guid":      "txn-id",
+				"traceId":   "trace-id",
+				"priority":  0.500000,
+				"sampled":   false,
+			},
+			Root: internal.WantTraceSegment{
+				SegmentName:         "ROOT",
 				RelativeStartMillis: 0,
 				RelativeStopMillis:  123000,
-				Attributes:          map[string]interface{}{"exclusive_duration_millis": 123000},
+				Attributes:          map[string]interface{}{},
 				Children: []internal.WantTraceSegment{
 					{
-						SegmentName:         "Custom/7",
-						RelativeStartMillis: 18000,
-						RelativeStopMillis:  25000,
-						Attributes:          map[string]interface{}{},
-						Children:            []internal.WantTraceSegment{},
-					},
-					{
-						SegmentName:         "Custom/8",
-						RelativeStartMillis: 27000,
-						RelativeStopMillis:  35000,
-						Attributes:          map[string]interface{}{},
-						Children:            []internal.WantTraceSegment{},
-					},
-					{
-						SegmentName:         "Custom/9",
-						RelativeStartMillis: 36000,
-						RelativeStopMillis:  45000,
-						Attributes:          map[string]interface{}{},
-						Children:            []internal.WantTraceSegment{},
+						SegmentName:         "WebTransaction/Go/hello",
+						RelativeStartMillis: 0,
+						RelativeStopMillis:  123000,
+						Attributes:          map[string]interface{}{"exclusive_duration_millis": 123000},
+						Children: []internal.WantTraceSegment{
+							{
+								SegmentName:         "Custom/7",
+								RelativeStartMillis: 18000,
+								RelativeStopMillis:  25000,
+								Attributes:          map[string]interface{}{},
+								Children:            []internal.WantTraceSegment{},
+							},
+							{
+								SegmentName:         "Custom/8",
+								RelativeStartMillis: 27000,
+								RelativeStopMillis:  35000,
+								Attributes:          map[string]interface{}{},
+								Children:            []internal.WantTraceSegment{},
+							},
+							{
+								SegmentName:         "Custom/9",
+								RelativeStartMillis: 36000,
+								RelativeStopMillis:  45000,
+								Attributes:          map[string]interface{}{},
+								Children:            []internal.WantTraceSegment{},
+							},
+						},
 					},
 				},
-			}},
+			},
 		},
-	}})
+	})
 }
 
 func TestEmptyHarvestTraces(t *testing.T) {
@@ -877,32 +909,36 @@ func TestLongestTraceSaved(t *testing.T) {
 		Trace: txndata.TxnTrace,
 	})
 
-	expectTxnTraces(t, ht, []internal.WantTxnTrace{{
-		DurationMillis:  float64Ptr(5000.0),
-		MetricName:      "WebTransaction/Go/5",
-		UserAttributes:  map[string]interface{}{},
-		AgentAttributes: map[string]interface{}{"request.uri": "/url"},
-		Intrinsics: map[string]interface{}{
-			"totalTime": 6,
-			"guid":      "txn-id-5",
-			"traceId":   "trace-id-5",
-			"priority":  0.500000,
-			"sampled":   false,
-		},
-		Root: internal.WantTraceSegment{
-			SegmentName:         "ROOT",
-			RelativeStartMillis: 0,
-			RelativeStopMillis:  5000,
-			Attributes:          map[string]interface{}{},
-			Children: []internal.WantTraceSegment{{
-				SegmentName:         "WebTransaction/Go/5",
+	expectTxnTraces(t, ht, []internal.WantTxnTrace{
+		{
+			DurationMillis:  float64Ptr(5000.0),
+			MetricName:      "WebTransaction/Go/5",
+			UserAttributes:  map[string]interface{}{},
+			AgentAttributes: map[string]interface{}{"request.uri": "/url"},
+			Intrinsics: map[string]interface{}{
+				"totalTime": 6,
+				"guid":      "txn-id-5",
+				"traceId":   "trace-id-5",
+				"priority":  0.500000,
+				"sampled":   false,
+			},
+			Root: internal.WantTraceSegment{
+				SegmentName:         "ROOT",
 				RelativeStartMillis: 0,
 				RelativeStopMillis:  5000,
-				Attributes:          map[string]interface{}{"exclusive_duration_millis": 5000},
-				Children:            []internal.WantTraceSegment{},
-			}},
+				Attributes:          map[string]interface{}{},
+				Children: []internal.WantTraceSegment{
+					{
+						SegmentName:         "WebTransaction/Go/5",
+						RelativeStartMillis: 0,
+						RelativeStopMillis:  5000,
+						Attributes:          map[string]interface{}{"exclusive_duration_millis": 5000},
+						Children:            []internal.WantTraceSegment{},
+					},
+				},
+			},
 		},
-	}})
+	})
 }
 
 func TestTxnTraceStackTraceThreshold(t *testing.T) {
@@ -956,38 +992,40 @@ func TestTxnTraceStackTraceThreshold(t *testing.T) {
 				RelativeStartMillis: 0,
 				RelativeStopMillis:  3000,
 				Attributes:          map[string]interface{}{},
-				Children: []internal.WantTraceSegment{{
-					SegmentName:         "WebTransaction/Go/3",
-					RelativeStartMillis: 0,
-					RelativeStopMillis:  3000,
-					Attributes:          map[string]interface{}{"exclusive_duration_millis": 3000},
-					Children: []internal.WantTraceSegment{
-						{
-							SegmentName:         "Custom/t1",
-							RelativeStartMillis: 1000,
-							RelativeStopMillis:  2000,
-							Attributes:          map[string]interface{}{},
-							Children:            []internal.WantTraceSegment{},
-						},
-						{
-							SegmentName:         "Custom/t2",
-							RelativeStartMillis: 2000,
-							RelativeStopMillis:  4000,
-							Attributes:          map[string]interface{}{"backtrace": internal.MatchAnything},
-							Children:            []internal.WantTraceSegment{},
-						},
-						{
-							SegmentName:         "External/example.com/http",
-							RelativeStartMillis: 4000,
-							RelativeStopMillis:  6000,
-							Attributes: map[string]interface{}{
-								"backtrace": internal.MatchAnything,
-								"http.url":  "http://example.com/zip/zap",
+				Children: []internal.WantTraceSegment{
+					{
+						SegmentName:         "WebTransaction/Go/3",
+						RelativeStartMillis: 0,
+						RelativeStopMillis:  3000,
+						Attributes:          map[string]interface{}{"exclusive_duration_millis": 3000},
+						Children: []internal.WantTraceSegment{
+							{
+								SegmentName:         "Custom/t1",
+								RelativeStartMillis: 1000,
+								RelativeStopMillis:  2000,
+								Attributes:          map[string]interface{}{},
+								Children:            []internal.WantTraceSegment{},
 							},
-							Children: []internal.WantTraceSegment{},
+							{
+								SegmentName:         "Custom/t2",
+								RelativeStartMillis: 2000,
+								RelativeStopMillis:  4000,
+								Attributes:          map[string]interface{}{"backtrace": internal.MatchAnything},
+								Children:            []internal.WantTraceSegment{},
+							},
+							{
+								SegmentName:         "External/example.com/http",
+								RelativeStartMillis: 4000,
+								RelativeStopMillis:  6000,
+								Attributes: map[string]interface{}{
+									"backtrace": internal.MatchAnything,
+									"http.url":  "http://example.com/zip/zap",
+								},
+								Children: []internal.WantTraceSegment{},
+							},
 						},
 					},
-				}},
+				},
 			},
 		},
 	})
@@ -1067,13 +1105,15 @@ func TestTxnTraceSynthetics(t *testing.T) {
 				RelativeStartMillis: 0,
 				RelativeStopMillis:  3000,
 				Attributes:          map[string]interface{}{},
-				Children: []internal.WantTraceSegment{{
-					SegmentName:         "WebTransaction/Go/3",
-					RelativeStartMillis: 0,
-					RelativeStopMillis:  3000,
-					Attributes:          map[string]interface{}{"exclusive_duration_millis": 3000},
-					Children:            []internal.WantTraceSegment{},
-				}},
+				Children: []internal.WantTraceSegment{
+					{
+						SegmentName:         "WebTransaction/Go/3",
+						RelativeStartMillis: 0,
+						RelativeStopMillis:  3000,
+						Attributes:          map[string]interface{}{"exclusive_duration_millis": 3000},
+						Children:            []internal.WantTraceSegment{},
+					},
+				},
 			},
 		},
 		{
@@ -1090,13 +1130,15 @@ func TestTxnTraceSynthetics(t *testing.T) {
 				RelativeStartMillis: 0,
 				RelativeStopMillis:  5000,
 				Attributes:          map[string]interface{}{},
-				Children: []internal.WantTraceSegment{{
-					SegmentName:         "WebTransaction/Go/5",
-					RelativeStartMillis: 0,
-					RelativeStopMillis:  5000,
-					Attributes:          map[string]interface{}{"exclusive_duration_millis": 5000},
-					Children:            []internal.WantTraceSegment{},
-				}},
+				Children: []internal.WantTraceSegment{
+					{
+						SegmentName:         "WebTransaction/Go/5",
+						RelativeStartMillis: 0,
+						RelativeStopMillis:  5000,
+						Attributes:          map[string]interface{}{"exclusive_duration_millis": 5000},
+						Children:            []internal.WantTraceSegment{},
+					},
+				},
 			},
 		},
 		{
@@ -1113,13 +1155,15 @@ func TestTxnTraceSynthetics(t *testing.T) {
 				RelativeStartMillis: 0,
 				RelativeStopMillis:  4000,
 				Attributes:          map[string]interface{}{},
-				Children: []internal.WantTraceSegment{{
-					SegmentName:         "WebTransaction/Go/4",
-					RelativeStartMillis: 0,
-					RelativeStopMillis:  4000,
-					Attributes:          map[string]interface{}{"exclusive_duration_millis": 4000},
-					Children:            []internal.WantTraceSegment{},
-				}},
+				Children: []internal.WantTraceSegment{
+					{
+						SegmentName:         "WebTransaction/Go/4",
+						RelativeStartMillis: 0,
+						RelativeStopMillis:  4000,
+						Attributes:          map[string]interface{}{"exclusive_duration_millis": 4000},
+						Children:            []internal.WantTraceSegment{},
+					},
+				},
 			},
 		},
 	})

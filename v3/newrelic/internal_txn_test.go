@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/newrelic/go-agent/v3/internal"
-	"github.com/newrelic/go-agent/v3/internal/cat"
+	"github.com/rainforestpay/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal/cat"
 )
 
 func TestShouldSaveTrace(t *testing.T) {
@@ -644,8 +644,9 @@ func TestDTPriority(t *testing.T) {
 			txn := app.StartTransaction("hello")
 
 			inboundHdrs := map[string][]string{
-				DistributedTraceNewRelicHeader: {`{"v":[0,1],"d":{"ty":"App","ap":"456","ac":"123","id":"myid","tr":"mytrip","ti":1574881875872` +
-					tc.incomingSampledAndPriority + "}}",
+				DistributedTraceNewRelicHeader: {
+					`{"v":[0,1],"d":{"ty":"App","ap":"456","ac":"123","id":"myid","tr":"mytrip","ti":1574881875872` +
+						tc.incomingSampledAndPriority + "}}",
 				},
 			}
 

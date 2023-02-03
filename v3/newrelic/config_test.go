@@ -14,9 +14,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/newrelic/go-agent/v3/internal"
-	"github.com/newrelic/go-agent/v3/internal/crossagent"
-	"github.com/newrelic/go-agent/v3/internal/utilization"
+	"github.com/rainforestpay/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal/crossagent"
+	"github.com/rainforestpay/go-agent/v3/internal/utilization"
 )
 
 type labelsTestCase struct {
@@ -622,37 +622,44 @@ func TestPreconnectHost(t *testing.T) {
 		override string
 		expect   string
 	}{
-		{ // non-region license
+		{
+			// non-region license
 			license:  "0123456789012345678901234567890123456789",
 			override: "",
 			expect:   preconnectHostDefault,
 		},
-		{ // override present
+		{
+			// override present
 			license:  "0123456789012345678901234567890123456789",
 			override: "other-collector.newrelic.com",
 			expect:   "other-collector.newrelic.com",
 		},
-		{ // four letter region
+		{
+			// four letter region
 			license:  "eu01xx6789012345678901234567890123456789",
 			override: "",
 			expect:   "collector.eu01.nr-data.net",
 		},
-		{ // five letter region
+		{
+			// five letter region
 			license:  "gov01x6789012345678901234567890123456789",
 			override: "",
 			expect:   "collector.gov01.nr-data.net",
 		},
-		{ // six letter region
+		{
+			// six letter region
 			license:  "foo001x6789012345678901234567890123456789",
 			override: "",
 			expect:   "collector.foo001.nr-data.net",
 		},
 	}
 	for idx, tc := range testcases {
-		cfg := config{Config: Config{
-			License: tc.license,
-			Host:    tc.override,
-		}}
+		cfg := config{
+			Config: Config{
+				License: tc.license,
+				Host:    tc.override,
+			},
+		}
 		if got := cfg.preconnectHost(); got != tc.expect {
 			t.Error("testcase", idx, got, tc.expect)
 		}
@@ -684,10 +691,12 @@ func TestPreconnectHostCrossAgent(t *testing.T) {
 			overrideHost = tc.EnvOverrideHost
 		}
 
-		cfg := config{Config: Config{
-			License: configKey,
-			Host:    overrideHost,
-		}}
+		cfg := config{
+			Config: Config{
+				License: configKey,
+				Host:    overrideHost,
+			},
+		}
 		if host := cfg.preconnectHost(); host != tc.ExpectHostname {
 			t.Errorf(`test="%s" got="%s" expected="%s"`, tc.Name, host, tc.ExpectHostname)
 		}

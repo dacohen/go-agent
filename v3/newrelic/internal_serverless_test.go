@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/newrelic/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal"
 )
 
 func TestServerlessDistributedTracingConfigPresent(t *testing.T) {
@@ -203,13 +203,15 @@ func TestServerlessRecordCustomEvent(t *testing.T) {
 	attributes := map[string]interface{}{"zip": 1}
 	app.RecordCustomEvent("myType", attributes)
 	app.expectNoLoggedErrors(t)
-	app.ExpectCustomEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"type":      "myType",
-			"timestamp": internal.MatchAnything,
+	app.ExpectCustomEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"type":      "myType",
+				"timestamp": internal.MatchAnything,
+			},
+			UserAttributes: attributes,
 		},
-		UserAttributes: attributes,
-	}})
+	})
 
 	buf := &bytes.Buffer{}
 	internal.ServerlessWrite(app.Application.Private, "my-arn", buf)

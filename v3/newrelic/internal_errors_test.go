@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/newrelic/go-agent/v3/internal"
+	"github.com/rainforestpay/go-agent/v3/internal"
 )
 
 type myError struct{}
@@ -22,18 +22,22 @@ func TestNoticeErrorBackground(t *testing.T) {
 	txn.NoticeError(myError{})
 	app.expectNoLoggedErrors(t)
 	txn.End()
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName: "OtherTransaction/Go/hello",
-		Msg:     "my msg",
-		Klass:   "newrelic.myError",
-	}})
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "newrelic.myError",
-			"error.message":   "my msg",
-			"transactionName": "OtherTransaction/Go/hello",
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName: "OtherTransaction/Go/hello",
+			Msg:     "my msg",
+			Klass:   "newrelic.myError",
 		},
-	}})
+	})
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "newrelic.myError",
+				"error.message":   "my msg",
+				"transactionName": "OtherTransaction/Go/hello",
+			},
+		},
+	})
 	app.ExpectMetrics(t, backgroundErrorMetrics)
 }
 
@@ -44,19 +48,23 @@ func TestNoticeErrorWeb(t *testing.T) {
 	txn.NoticeError(myError{})
 	app.expectNoLoggedErrors(t)
 	txn.End()
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName: "WebTransaction/Go/hello",
-		Msg:     "my msg",
-		Klass:   "newrelic.myError",
-	}})
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "newrelic.myError",
-			"error.message":   "my msg",
-			"transactionName": "WebTransaction/Go/hello",
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName: "WebTransaction/Go/hello",
+			Msg:     "my msg",
+			Klass:   "newrelic.myError",
 		},
-		AgentAttributes: helloRequestAttributes,
-	}})
+	})
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "newrelic.myError",
+				"error.message":   "my msg",
+				"transactionName": "WebTransaction/Go/hello",
+			},
+			AgentAttributes: helloRequestAttributes,
+		},
+	})
 	app.ExpectMetrics(t, webErrorMetrics)
 }
 
@@ -84,18 +92,22 @@ func TestNoticeErrorHighSecurity(t *testing.T) {
 	txn.NoticeError(myError{})
 	app.expectNoLoggedErrors(t)
 	txn.End()
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName: "OtherTransaction/Go/hello",
-		Msg:     highSecurityErrorMsg,
-		Klass:   "newrelic.myError",
-	}})
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "newrelic.myError",
-			"error.message":   highSecurityErrorMsg,
-			"transactionName": "OtherTransaction/Go/hello",
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName: "OtherTransaction/Go/hello",
+			Msg:     highSecurityErrorMsg,
+			Klass:   "newrelic.myError",
 		},
-	}})
+	})
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "newrelic.myError",
+				"error.message":   highSecurityErrorMsg,
+				"transactionName": "OtherTransaction/Go/hello",
+			},
+		},
+	})
 	app.ExpectMetrics(t, backgroundErrorMetrics)
 }
 
@@ -106,18 +118,22 @@ func TestNoticeErrorMessageSecurityPolicy(t *testing.T) {
 	txn.NoticeError(myError{})
 	app.expectNoLoggedErrors(t)
 	txn.End()
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName: "OtherTransaction/Go/hello",
-		Msg:     securityPolicyErrorMsg,
-		Klass:   "newrelic.myError",
-	}})
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "newrelic.myError",
-			"error.message":   securityPolicyErrorMsg,
-			"transactionName": "OtherTransaction/Go/hello",
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName: "OtherTransaction/Go/hello",
+			Msg:     securityPolicyErrorMsg,
+			Klass:   "newrelic.myError",
 		},
-	}})
+	})
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "newrelic.myError",
+				"error.message":   securityPolicyErrorMsg,
+				"transactionName": "OtherTransaction/Go/hello",
+			},
+		},
+	})
 	app.ExpectMetrics(t, backgroundErrorMetrics)
 }
 
@@ -172,20 +188,24 @@ func TestErrorsEnabledByServerSideConfig(t *testing.T) {
 	txn.NoticeError(myError{})
 	app.expectNoLoggedErrors(t)
 	txn.End()
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName: "OtherTransaction/Go/hello",
-		Msg:     "my msg",
-		Klass:   "newrelic.myError",
-	}})
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "newrelic.myError",
-			"error.message":   "my msg",
-			"transactionName": "OtherTransaction/Go/hello",
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName: "OtherTransaction/Go/hello",
+			Msg:     "my msg",
+			Klass:   "newrelic.myError",
 		},
-		UserAttributes:  map[string]interface{}{},
-		AgentAttributes: map[string]interface{}{},
-	}})
+	})
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "newrelic.myError",
+				"error.message":   "my msg",
+				"transactionName": "OtherTransaction/Go/hello",
+			},
+			UserAttributes:  map[string]interface{}{},
+			AgentAttributes: map[string]interface{}{},
+		},
+	})
 	app.ExpectMetrics(t, backgroundErrorMetrics)
 }
 
@@ -199,15 +219,17 @@ func TestNoticeErrorTracedErrorsRemotelyDisabled(t *testing.T) {
 	app.expectNoLoggedErrors(t)
 	txn.End()
 	app.ExpectErrors(t, []internal.WantError{})
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "newrelic.myError",
-			"error.message":   "my msg",
-			"transactionName": "OtherTransaction/Go/hello",
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "newrelic.myError",
+				"error.message":   "my msg",
+				"transactionName": "OtherTransaction/Go/hello",
+			},
+			UserAttributes:  map[string]interface{}{},
+			AgentAttributes: map[string]interface{}{},
 		},
-		UserAttributes:  map[string]interface{}{},
-		AgentAttributes: map[string]interface{}{},
-	}})
+	})
 	app.ExpectMetrics(t, backgroundErrorMetrics)
 }
 
@@ -234,11 +256,13 @@ func TestNoticeErrorEventsLocallyDisabled(t *testing.T) {
 	txn.NoticeError(myError{})
 	app.expectNoLoggedErrors(t)
 	txn.End()
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName: "OtherTransaction/Go/hello",
-		Msg:     "my msg",
-		Klass:   "newrelic.myError",
-	}})
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName: "OtherTransaction/Go/hello",
+			Msg:     "my msg",
+			Klass:   "newrelic.myError",
+		},
+	})
 	app.ExpectErrorEvents(t, []internal.WantEvent{})
 	app.ExpectMetrics(t, backgroundErrorMetrics)
 }
@@ -250,11 +274,13 @@ func TestNoticeErrorEventsRemotelyDisabled(t *testing.T) {
 	txn.NoticeError(myError{})
 	app.expectNoLoggedErrors(t)
 	txn.End()
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName: "OtherTransaction/Go/hello",
-		Msg:     "my msg",
-		Klass:   "newrelic.myError",
-	}})
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName: "OtherTransaction/Go/hello",
+			Msg:     "my msg",
+			Klass:   "newrelic.myError",
+		},
+	})
 	app.ExpectErrorEvents(t, []internal.WantEvent{})
 	app.ExpectMetrics(t, backgroundErrorMetrics)
 }
@@ -270,18 +296,22 @@ func TestErrorWithClasser(t *testing.T) {
 	txn.NoticeError(errorWithClass{class: "zap"})
 	app.expectNoLoggedErrors(t)
 	txn.End()
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName: "OtherTransaction/Go/hello",
-		Msg:     "my msg",
-		Klass:   "zap",
-	}})
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "zap",
-			"error.message":   "my msg",
-			"transactionName": "OtherTransaction/Go/hello",
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName: "OtherTransaction/Go/hello",
+			Msg:     "my msg",
+			Klass:   "zap",
 		},
-	}})
+	})
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "zap",
+				"error.message":   "my msg",
+				"transactionName": "OtherTransaction/Go/hello",
+			},
+		},
+	})
 	app.ExpectMetrics(t, backgroundErrorMetrics)
 }
 
@@ -291,18 +321,22 @@ func TestErrorWithClasserReturnsEmpty(t *testing.T) {
 	txn.NoticeError(errorWithClass{class: ""})
 	app.expectNoLoggedErrors(t)
 	txn.End()
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName: "OtherTransaction/Go/hello",
-		Msg:     "my msg",
-		Klass:   "newrelic.errorWithClass",
-	}})
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "newrelic.errorWithClass",
-			"error.message":   "my msg",
-			"transactionName": "OtherTransaction/Go/hello",
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName: "OtherTransaction/Go/hello",
+			Msg:     "my msg",
+			Klass:   "newrelic.errorWithClass",
 		},
-	}})
+	})
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "newrelic.errorWithClass",
+				"error.message":   "my msg",
+				"transactionName": "OtherTransaction/Go/hello",
+			},
+		},
+	})
 	app.ExpectMetrics(t, backgroundErrorMetrics)
 }
 
@@ -326,18 +360,22 @@ func TestErrorWithStackTrace(t *testing.T) {
 	txn.NoticeError(e)
 	app.expectNoLoggedErrors(t)
 	txn.End()
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName: "OtherTransaction/Go/hello",
-		Msg:     "my msg",
-		Klass:   "newrelic.withStackTrace",
-	}})
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "newrelic.withStackTrace",
-			"error.message":   "my msg",
-			"transactionName": "OtherTransaction/Go/hello",
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName: "OtherTransaction/Go/hello",
+			Msg:     "my msg",
+			Klass:   "newrelic.withStackTrace",
 		},
-	}})
+	})
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "newrelic.withStackTrace",
+				"error.message":   "my msg",
+				"transactionName": "OtherTransaction/Go/hello",
+			},
+		},
+	})
 	app.ExpectMetrics(t, backgroundErrorMetrics)
 }
 
@@ -348,18 +386,22 @@ func TestErrorWithStackTraceReturnsNil(t *testing.T) {
 	txn.NoticeError(e)
 	app.expectNoLoggedErrors(t)
 	txn.End()
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName: "OtherTransaction/Go/hello",
-		Msg:     "my msg",
-		Klass:   "newrelic.withStackTrace",
-	}})
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "newrelic.withStackTrace",
-			"error.message":   "my msg",
-			"transactionName": "OtherTransaction/Go/hello",
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName: "OtherTransaction/Go/hello",
+			Msg:     "my msg",
+			Klass:   "newrelic.withStackTrace",
 		},
-	}})
+	})
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "newrelic.withStackTrace",
+				"error.message":   "my msg",
+				"transactionName": "OtherTransaction/Go/hello",
+			},
+		},
+	})
 	app.ExpectMetrics(t, backgroundErrorMetrics)
 }
 
@@ -372,18 +414,22 @@ func TestNewrelicErrorNoAttributes(t *testing.T) {
 	})
 	app.expectNoLoggedErrors(t)
 	txn.End()
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName: "OtherTransaction/Go/hello",
-		Msg:     "my msg",
-		Klass:   "my class",
-	}})
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "my class",
-			"error.message":   "my msg",
-			"transactionName": "OtherTransaction/Go/hello",
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName: "OtherTransaction/Go/hello",
+			Msg:     "my msg",
+			Klass:   "my class",
 		},
-	}})
+	})
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "my class",
+				"error.message":   "my msg",
+				"transactionName": "OtherTransaction/Go/hello",
+			},
+		},
+	})
 	app.ExpectMetrics(t, backgroundErrorMetrics)
 }
 
@@ -400,20 +446,24 @@ func TestNewrelicErrorValidAttributes(t *testing.T) {
 	})
 	app.expectNoLoggedErrors(t)
 	txn.End()
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName:        "OtherTransaction/Go/hello",
-		Msg:            "my msg",
-		Klass:          "my class",
-		UserAttributes: extraAttributes,
-	}})
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "my class",
-			"error.message":   "my msg",
-			"transactionName": "OtherTransaction/Go/hello",
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName:        "OtherTransaction/Go/hello",
+			Msg:            "my msg",
+			Klass:          "my class",
+			UserAttributes: extraAttributes,
 		},
-		UserAttributes: extraAttributes,
-	}})
+	})
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "my class",
+				"error.message":   "my msg",
+				"transactionName": "OtherTransaction/Go/hello",
+			},
+			UserAttributes: extraAttributes,
+		},
+	})
 	app.ExpectMetrics(t, backgroundErrorMetrics)
 }
 
@@ -434,20 +484,24 @@ func TestNewrelicErrorAttributesHighSecurity(t *testing.T) {
 	})
 	app.expectNoLoggedErrors(t)
 	txn.End()
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName:        "OtherTransaction/Go/hello",
-		Msg:            "message removed by high security setting",
-		Klass:          "my class",
-		UserAttributes: map[string]interface{}{},
-	}})
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "my class",
-			"error.message":   "message removed by high security setting",
-			"transactionName": "OtherTransaction/Go/hello",
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName:        "OtherTransaction/Go/hello",
+			Msg:            "message removed by high security setting",
+			Klass:          "my class",
+			UserAttributes: map[string]interface{}{},
 		},
-		UserAttributes: map[string]interface{}{},
-	}})
+	})
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "my class",
+				"error.message":   "message removed by high security setting",
+				"transactionName": "OtherTransaction/Go/hello",
+			},
+			UserAttributes: map[string]interface{}{},
+		},
+	})
 	app.ExpectMetrics(t, backgroundErrorMetrics)
 }
 
@@ -465,20 +519,24 @@ func TestNewrelicErrorAttributesSecurityPolicy(t *testing.T) {
 	})
 	app.expectNoLoggedErrors(t)
 	txn.End()
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName:        "OtherTransaction/Go/hello",
-		Msg:            "my msg",
-		Klass:          "my class",
-		UserAttributes: map[string]interface{}{},
-	}})
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "my class",
-			"error.message":   "my msg",
-			"transactionName": "OtherTransaction/Go/hello",
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName:        "OtherTransaction/Go/hello",
+			Msg:            "my msg",
+			Klass:          "my class",
+			UserAttributes: map[string]interface{}{},
 		},
-		UserAttributes: map[string]interface{}{},
-	}})
+	})
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "my class",
+				"error.message":   "my msg",
+				"transactionName": "OtherTransaction/Go/hello",
+			},
+			UserAttributes: map[string]interface{}{},
+		},
+	})
 	app.ExpectMetrics(t, backgroundErrorMetrics)
 }
 
@@ -496,20 +554,24 @@ func TestNewrelicErrorAttributeOverridesNormalAttribute(t *testing.T) {
 	})
 	app.expectNoLoggedErrors(t)
 	txn.End()
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName:        "OtherTransaction/Go/hello",
-		Msg:            "my msg",
-		Klass:          "my class",
-		UserAttributes: extraAttributes,
-	}})
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "my class",
-			"error.message":   "my msg",
-			"transactionName": "OtherTransaction/Go/hello",
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName:        "OtherTransaction/Go/hello",
+			Msg:            "my msg",
+			Klass:          "my class",
+			UserAttributes: extraAttributes,
 		},
-		UserAttributes: extraAttributes,
-	}})
+	})
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "my class",
+				"error.message":   "my msg",
+				"transactionName": "OtherTransaction/Go/hello",
+			},
+			UserAttributes: extraAttributes,
+		},
+	})
 	app.ExpectMetrics(t, backgroundErrorMetrics)
 }
 
@@ -551,20 +613,24 @@ func TestExtraErrorAttributeRemovedThroughConfiguration(t *testing.T) {
 	})
 	app.expectNoLoggedErrors(t)
 	txn.End()
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName:        "OtherTransaction/Go/hello",
-		Msg:            "my msg",
-		Klass:          "my class",
-		UserAttributes: map[string]interface{}{"zip": "zap"},
-	}})
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "my class",
-			"error.message":   "my msg",
-			"transactionName": "OtherTransaction/Go/hello",
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName:        "OtherTransaction/Go/hello",
+			Msg:            "my msg",
+			Klass:          "my class",
+			UserAttributes: map[string]interface{}{"zip": "zap"},
 		},
-		UserAttributes: map[string]interface{}{"zip": "zap"},
-	}})
+	})
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "my class",
+				"error.message":   "my msg",
+				"transactionName": "OtherTransaction/Go/hello",
+			},
+			UserAttributes: map[string]interface{}{"zip": "zap"},
+		},
+	})
 	app.ExpectMetrics(t, backgroundErrorMetrics)
 
 }
@@ -653,23 +719,27 @@ func TestNoticeErrorSpanID(t *testing.T) {
 	txn.NoticeError(myError{})
 	app.expectNoLoggedErrors(t)
 	txn.End()
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName: "OtherTransaction/Go/hello",
-		Msg:     "my msg",
-		Klass:   "newrelic.myError",
-	}})
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "newrelic.myError",
-			"error.message":   "my msg",
-			"guid":            "52fdfc072182654f",
-			"priority":        1.437714,
-			"sampled":         true,
-			"spanId":          "9566c74d10d1e2c6",
-			"traceId":         "52fdfc072182654f163f5f0f9a621d72",
-			"transactionName": "OtherTransaction/Go/hello",
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName: "OtherTransaction/Go/hello",
+			Msg:     "my msg",
+			Klass:   "newrelic.myError",
 		},
-	}})
+	})
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "newrelic.myError",
+				"error.message":   "my msg",
+				"guid":            "52fdfc072182654f",
+				"priority":        1.437714,
+				"sampled":         true,
+				"spanId":          "9566c74d10d1e2c6",
+				"traceId":         "52fdfc072182654f163f5f0f9a621d72",
+				"transactionName": "OtherTransaction/Go/hello",
+			},
+		},
+	})
 	app.ExpectMetrics(t, backgroundErrorMetricsUnknownCaller)
 }
 
@@ -679,23 +749,27 @@ func TestNoticeErrorWriteHeaderSpanID(t *testing.T) {
 	txn.SetWebResponse(nil).WriteHeader(500)
 	app.expectNoLoggedErrors(t)
 	txn.End()
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName: "OtherTransaction/Go/hello",
-		Msg:     "Internal Server Error",
-		Klass:   "500",
-	}})
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "500",
-			"error.message":   "Internal Server Error",
-			"guid":            "52fdfc072182654f",
-			"priority":        1.437714,
-			"sampled":         true,
-			"spanId":          "9566c74d10d1e2c6",
-			"traceId":         "52fdfc072182654f163f5f0f9a621d72",
-			"transactionName": "OtherTransaction/Go/hello",
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName: "OtherTransaction/Go/hello",
+			Msg:     "Internal Server Error",
+			Klass:   "500",
 		},
-	}})
+	})
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "500",
+				"error.message":   "Internal Server Error",
+				"guid":            "52fdfc072182654f",
+				"priority":        1.437714,
+				"sampled":         true,
+				"spanId":          "9566c74d10d1e2c6",
+				"traceId":         "52fdfc072182654f163f5f0f9a621d72",
+				"transactionName": "OtherTransaction/Go/hello",
+			},
+		},
+	})
 	app.ExpectMetrics(t, backgroundErrorMetricsUnknownCaller)
 }
 
@@ -716,22 +790,26 @@ func TestNoticeErrorPanicRecoverySpanID(t *testing.T) {
 		panic("oops")
 	}()
 	app.expectNoLoggedErrors(t)
-	app.ExpectErrors(t, []internal.WantError{{
-		TxnName: "OtherTransaction/Go/hello",
-		Msg:     "oops",
-		Klass:   "panic",
-	}})
-	app.ExpectErrorEvents(t, []internal.WantEvent{{
-		Intrinsics: map[string]interface{}{
-			"error.class":     "panic",
-			"error.message":   "oops",
-			"guid":            "52fdfc072182654f",
-			"priority":        1.437714,
-			"sampled":         true,
-			"spanId":          "9566c74d10d1e2c6",
-			"traceId":         "52fdfc072182654f163f5f0f9a621d72",
-			"transactionName": "OtherTransaction/Go/hello",
+	app.ExpectErrors(t, []internal.WantError{
+		{
+			TxnName: "OtherTransaction/Go/hello",
+			Msg:     "oops",
+			Klass:   "panic",
 		},
-	}})
+	})
+	app.ExpectErrorEvents(t, []internal.WantEvent{
+		{
+			Intrinsics: map[string]interface{}{
+				"error.class":     "panic",
+				"error.message":   "oops",
+				"guid":            "52fdfc072182654f",
+				"priority":        1.437714,
+				"sampled":         true,
+				"spanId":          "9566c74d10d1e2c6",
+				"traceId":         "52fdfc072182654f163f5f0f9a621d72",
+				"transactionName": "OtherTransaction/Go/hello",
+			},
+		},
+	})
 	app.ExpectMetrics(t, backgroundErrorMetricsUnknownCaller)
 }
