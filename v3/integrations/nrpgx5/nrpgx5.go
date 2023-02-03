@@ -55,6 +55,7 @@ package nrpgx5
 import (
 	"context"
 	"strconv"
+	"sync"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/newrelic/go-agent/v3/internal"
@@ -71,6 +72,8 @@ type (
 		BaseSegment         newrelic.DatastoreSegment
 		ParseQuery          func(segment *newrelic.DatastoreSegment, query string)
 		SendQueryParameters bool
+
+		mutex sync.Mutex
 	}
 
 	nrPgxSegmentType string
@@ -92,6 +95,9 @@ func NewTracer() *Tracer {
 // TraceConnectStart is called at the beginning of Connect and ConnectConfig calls. The returned context is used for
 // the rest of the call and will be passed to TraceConnectEnd. // implement pgx.ConnectTracer
 func (t *Tracer) TraceConnectStart(ctx context.Context, data pgx.TraceConnectStartData) context.Context {
+	t.mutex.Lock()
+	defer t.mutex.Unlock()
+
 	t.BaseSegment = newrelic.DatastoreSegment{
 		Product:      newrelic.DatastorePostgres,
 		Host:         data.ConnConfig.Host,
@@ -103,11 +109,14 @@ func (t *Tracer) TraceConnectStart(ctx context.Context, data pgx.TraceConnectSta
 }
 
 // TraceConnectEnd method // implement pgx.ConnectTracer
-func (Tracer) TraceConnectEnd(ctx context.Context, data pgx.TraceConnectEndData) {}
+func (*Tracer) TraceConnectEnd(ctx context.Context, data pgx.TraceConnectEndData) {}
 
 // TraceQueryStart is called at the beginning of Query, QueryRow, and Exec calls. The returned context is used for the
 // rest of the call and will be passed to TraceQueryEnd. //implement pgx.QueryTracer
 func (t *Tracer) TraceQueryStart(ctx context.Context, conn *pgx.Conn, data pgx.TraceQueryStartData) context.Context {
+	t.mutex.Lock()
+	defer t.mutex.Unlock()
+
 	segment := t.BaseSegment
 	segment.StartTime = newrelic.FromContext(ctx).StartSegmentNow()
 	segment.ParameterizedQuery = data.SQL
@@ -123,6 +132,9 @@ func (t *Tracer) TraceQueryStart(ctx context.Context, conn *pgx.Conn, data pgx.T
 
 // TraceQueryEnd method implement pgx.QueryTracer. It will try to get segment from context and end it.
 func (t *Tracer) TraceQueryEnd(ctx context.Context, conn *pgx.Conn, data pgx.TraceQueryEndData) {
+	t.mutex.Lock()
+	defer t.mutex.Unlock()
+
 	segment, ok := ctx.Value(querySegmentKey).(*newrelic.DatastoreSegment)
 	if !ok {
 		return
@@ -141,6 +153,9 @@ func (t *Tracer) getQueryParameters(args []interface{}) map[string]interface{} {
 // TraceBatchStart is called at the beginning of SendBatch calls. The returned context is used for the
 // rest of the call and will be passed to TraceBatchQuery and TraceBatchEnd. // implement pgx.BatchTracer
 func (t *Tracer) TraceBatchStart(ctx context.Context, conn *pgx.Conn, data pgx.TraceBatchStartData) context.Context {
+	t.mutex.Lock()
+	defer t.mutex.Unlock()
+
 	segment := t.BaseSegment
 	segment.StartTime = newrelic.FromContext(ctx).StartSegmentNow()
 	segment.Operation = "batch"
@@ -151,6 +166,9 @@ func (t *Tracer) TraceBatchStart(ctx context.Context, conn *pgx.Conn, data pgx.T
 
 // TraceBatchQuery implement pgx.BatchTracer. In this method we will get query and store it in segment.
 func (t *Tracer) TraceBatchQuery(ctx context.Context, conn *pgx.Conn, data pgx.TraceBatchQueryData) {
+	t.mutex.Lock()
+	defer t.mutex.Unlock()
+
 	segment, ok := ctx.Value(batchSegmentKey).(*newrelic.DatastoreSegment)
 	if !ok {
 		return
@@ -161,6 +179,9 @@ func (t *Tracer) TraceBatchQuery(ctx context.Context, conn *pgx.Conn, data pgx.T
 
 // TraceBatchEnd implement pgx.BatchTracer. In this method we will get segment from context and fill it with
 func (t *Tracer) TraceBatchEnd(ctx context.Context, conn *pgx.Conn, data pgx.TraceBatchEndData) {
+	t.mutex.Lock()
+	defer t.mutex.Unlock()
+
 	segment, ok := ctx.Value(batchSegmentKey).(*newrelic.DatastoreSegment)
 	if !ok {
 		return
